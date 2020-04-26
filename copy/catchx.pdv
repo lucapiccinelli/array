@@ -1,0 +1,6 @@
+           if w-narg >= !N and w-args-size(!N) > 0
+              if length of l-!W < w-args-size(!N)
+                 move length of l-!W to w-args-size(!N)
+              end-if
+              move l-!W(1:w-args-size(!N)) to w-!W
+           end-if
