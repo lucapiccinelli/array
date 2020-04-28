@@ -27,9 +27,9 @@
        procedure division using
            l-operator
            l-expected
-           l-value
-           l-description.
+           l-value.
 
+       main.
            $CATCHPARAMS.
            copy "catchx.pdv" replacing
                ==!W== by ==operator==
@@ -42,16 +42,16 @@
                ==!N== by ==3==.
 
            evaluate w-operator
-              when EQ perform eq thru eq-ex
+              when EQ perform equality thru equality-ex
            end-evaluate.
 
            goback giving KO.
 
-       eq.
+       equality.
            if w-value = w-expected
               goback giving OK
            else
               goback giving KO
            end-if.
-       eq-ex.
+       equality-ex.
            exit.

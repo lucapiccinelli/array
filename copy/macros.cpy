@@ -1,4 +1,6 @@
        REPLACE
+           ==!MAX-PARAMS-NUM== by ==1==
+           ==$RETURN== by ==go post-process==
            ==$CATCHPARAMS== by
            ==
            call "c$narg" using w-narg end-call

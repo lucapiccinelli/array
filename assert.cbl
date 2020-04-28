@@ -23,14 +23,21 @@
            value "empty description".
 
        77  w-return-value pic 9(02) value 0.
+       77  w-display-decription pic x(256) value spaces.
+       77  w-string-pointer pic 9(18) value 0.
 
        linkage section.
        77  l-operator pic x(MAX-LINKAGE).
-       77  l-expected pic x(MEMBERS-DIMENSION).
-       77  l-value pic x(MEMBERS-DIMENSION).
-       77  l-description pic x(DESCRIPTION-DIMENSION).
+       77  l-expected pic x(MAX-LINKAGE).
+       77  l-value pic x(MAX-LINKAGE).
+       77  l-description pic x(MAX-LINKAGE).
 
-       procedure division.
+       procedure division using
+           l-operator
+           l-expected
+           l-value
+           l-description
+           .
            $CATCHPARAMS.
            copy "catchx.pdv" replacing
                ==!W== by ==operator==
@@ -48,5 +55,42 @@
            call "assert-logic"
               using w-operator w-expected w-value
               giving w-return-value.
+
+           initialize w-display-decription
+           move 1 to w-string-pointer.
+           if w-return-value = OK
+              string
+                 "OK -- "
+                 into w-display-decription
+                 pointer w-string-pointer
+              end-string
+           else
+              string
+                 "KO -- "
+                 into w-display-decription
+                 pointer w-string-pointer
+              end-string
+           end-if.
+
+           string
+              w-description
+              delimited by STRING-LIMIT
+              into w-display-decription
+              pointer w-string-pointer
+           end-string.
+
+           if w-return-value = KO
+              string
+                 " -- Expected "
+                 w-expected
+                 ". It was instead "
+                 w-value
+                 delimited by STRING-LIMIT
+                 into w-display-decription
+                 pointer w-string-pointer
+              end-string
+           end-if.
+
+           display w-display-decription upon console.
 
            goback giving w-return-value.

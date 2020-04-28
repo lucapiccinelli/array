@@ -1,18 +1,18 @@
            if w-narg >= !N and w-args-size(!N) > 0
               if length of w-!W >= w-args-size(!N)
                  initialize w-!W
-                 move lks-!W(1:w-args-size(!N))
+                 move l-!W(1:w-args-size(!N))
                    to w-!W(
                       length of w-!W - w-args-size(!N) + 1
                       :w-args-size(!N))
               else
-                 if w-args-size(!N) <= length of lks-!W
-                    move lks-!W(
+                 if w-args-size(!N) <= length of l-!W
+                    move l-!W(
                          w-args-size(!N) - length of w-!W + 1
                          :w-args-size(!N))
                      to w-!W
                  else
-                    move lks-!W(1:length of lks-!W) to w-!W convert
+                    move l-!W(1:length of l-!W) to w-!W convert
                  end-if
               end-if
            end-if
