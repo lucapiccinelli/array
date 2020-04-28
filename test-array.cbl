@@ -25,8 +25,8 @@
            call "array".
 
            move STR-EL-SZ to w-expected-array-element-sz.
-           move 2 to w-expected-array-length.
-           move 0 to w-expected-array-capacity.
+           move 0 to w-expected-array-length.
+           move 2 to w-expected-array-capacity.
            call "array:new" using w-array length of w-str-element.
            call "assert"
               using EQ

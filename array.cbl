@@ -41,6 +41,9 @@
            move INITIAL-CAPACITY to w-array-capacity.
            move 0 to w-array-length.
 
+           copy "movex.pdv" replacing
+               ==!W== by ==array==
+               ==!N== by ==1==.
            $RETURN.
 
        post-process.
