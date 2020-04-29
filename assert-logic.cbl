@@ -19,15 +19,24 @@
        77  w-expected pic x(MEMBERS-DIMENSION) value spaces.
        77  w-value pic x(MEMBERS-DIMENSION) value spaces.
 
+       77  w-array-data-length pic 9(09) value 0.
+       copy "array.cpy"
+           replacing ==!PREFIX!== by ==w-==.
+
        linkage section.
        77  l-operator pic x(MAX-LINKAGE).
        77  l-expected pic x(MEMBERS-DIMENSION).
        77  l-value pic x(MEMBERS-DIMENSION).
 
+       77  d-array-data pic x(MAX-LINKAGE).
+
        procedure division using
            l-operator
            l-expected
-           l-value.
+           l-value
+
+           d-array-data
+           .
 
        main.
            $CATCHPARAMS.
@@ -42,7 +51,10 @@
                ==!N== by ==3==.
 
            evaluate w-operator
-              when EQ perform equality thru equality-ex
+              when EQ
+                 perform equality thru equality-ex
+              when ARRAY-EQ
+                 perform array-equality thru array-equality-ex
            end-evaluate.
 
            goback giving KO.
@@ -54,4 +66,24 @@
               goback giving KO
            end-if.
        equality-ex.
+           exit.
+
+       array-equality.
+           move w-value to w-array.
+           compute w-array-data-length =
+              w-array-length * w-array-element-sz
+           end-compute.
+           set address of d-array-data to w-array-ptr.
+
+           if d-array-data(1:w-array-data-length) = w-expected
+              goback giving OK
+           else
+              goback giving KO
+           end-if.
+
+           move d-array-data(1:w-array-data-length) to w-value
+           copy "movex.pdv" replacing
+               ==!W== by ==value==
+               ==!N== by ==3==..
+       array-equality-ex.
            exit.

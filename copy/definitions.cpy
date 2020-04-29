@@ -3,6 +3,8 @@
        78  KO value 1.
 
        78  EQ value "eq".
+       78  NUM-EQ value "numeq".
+       78  ARRAY-EQ value "aeq".
        78  STRING-LIMIT value "  ".
 
        copy "macros.cpy".

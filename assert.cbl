@@ -13,12 +13,12 @@
        copy "definitions.cpy"
            replacing ==!MAX-PARAMS-NUM== by ==4==.
 
-       78  MEMBERS-DIMENSION value 2048.
+       78  VALUE-DIMENSION value 2048.
        78  DESCRIPTION-DIMENSION value 2048.
 
        77  w-operator pic x(16) value EQ.
-       77  w-expected pic x(MEMBERS-DIMENSION) value spaces.
-       77  w-value pic x(MEMBERS-DIMENSION) value spaces.
+       77  w-expected pic x(VALUE-DIMENSION) value spaces.
+       77  w-value pic x(VALUE-DIMENSION) value spaces.
        77  w-description pic x(DESCRIPTION-DIMENSION)
            value "empty description".
 
