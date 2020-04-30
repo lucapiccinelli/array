@@ -55,6 +55,20 @@
                ==!N== by ==1==.
            $RETURN.
 
+       entry "array:free" using l-array.
+           $CATCHPARAMS.
+           copy "catchx.pdv" replacing
+               ==!W== by ==array==
+               ==!N== by ==1==.
+
+           call "m$free" using w-array-ptr.
+           initialize w-array.
+
+           copy "movex.pdv" replacing
+               ==!W== by ==array==
+               ==!N== by ==1==.
+           $RETURN.
+
 
        entry "array:append" using l-array l-element.
            $CATCHPARAMS.

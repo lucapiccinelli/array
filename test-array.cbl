@@ -31,6 +31,8 @@
               thru test-allocation-ex.
            perform test-append1
               thru test-append1-ex.
+
+           call "array:free" using w-array.
            perform test-append-many
               thru test-append-many-ex.
 
@@ -48,7 +50,6 @@
                     w-expected-array-data
                     w-array-data
                     "array should be allocated as expected".
-
        test-allocation-ex.
            exit.
 
@@ -67,7 +68,6 @@
            move 2 to w-expected-array-length.
            call "assert" using EQ w-expected-array-length w-array-length
               "after appending, array length should increment".
-
        test-append1-ex.
            exit.
 
@@ -90,6 +90,7 @@
            call "assert" using EQ w-expected-array-length w-array-length
               "after appending, array length should increment".
 
+           call "array:free" using w-array.
        test-append-many-ex.
            exit.
 
