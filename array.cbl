@@ -19,6 +19,9 @@
        copy "array.cpy" replacing ==!PREFIX!== by ==w-==.
        77  w-element-sz pic 9(09) value 0.
        77  w-capacity   pic 9(09) value 0.
+       77  w-old-capacity   pic 9(09) value 0.
+       77  w-offset-ptr usage pointer value 0.
+       77  w-tmp-ptr usage pointer value 0.
 
        linkage section.
        copy "array.cpy" replacing ==!PREFIX!== by ==l-==.
@@ -59,10 +62,15 @@
                ==!W== by ==array==
                ==!N== by ==1==.
 
-           set address of d-array to w-array-ptr.
+           if w-array-length = w-array-capacity
+              perform realloc thru realloc-ex
+           end-if.
+           compute w-offset-ptr =
+              w-array-ptr + (w-array-element-sz * w-array-length).
+           set address of d-array to w-offset-ptr.
            move l-element(1:w-args-size(2))
               to d-array(1:w-array-element-sz).
-           move 1 to w-array-length.
+           add 1 to w-array-length.
 
            copy "movex.pdv" replacing
                ==!W== by ==array==
@@ -74,8 +82,19 @@
 
        alloc.
            compute w-capacity = w-array-capacity * w-element-sz.
-           call "m$alloc" using w-element-sz w-array-ptr .
+           call "m$alloc" using w-capacity w-array-ptr.
        alloc-ex.
+           exit.
+
+       realloc.
+           compute w-old-capacity = w-array-capacity * w-element-sz.
+           multiply w-array-capacity by 2 giving w-array-capacity.
+           move w-array-ptr to w-tmp-ptr.
+           perform alloc thru alloc-ex.
+           call "m$copy" using w-array-ptr w-tmp-ptr w-old-capacity.
+           call "m$free" using w-tmp-ptr.
+           initialize w-tmp-ptr.
+       realloc-ex.
            exit.
 
 

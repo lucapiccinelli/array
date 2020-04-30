@@ -18,7 +18,7 @@
 
        77  w-operator pic x(16) value EQ.
        77  w-expected pic x(VALUE-DIMENSION) value spaces.
-       77  w-value pic x(VALUE-DIMENSION) value spaces.
+       77  w-actual pic x(VALUE-DIMENSION) value spaces.
        77  w-description pic x(DESCRIPTION-DIMENSION)
            value "empty description".
 
@@ -29,13 +29,13 @@
        linkage section.
        77  l-operator pic x(MAX-LINKAGE).
        77  l-expected pic x(MAX-LINKAGE).
-       77  l-value pic x(MAX-LINKAGE).
+       77  l-actual pic x(MAX-LINKAGE).
        77  l-description pic x(MAX-LINKAGE).
 
        procedure division using
            l-operator
            l-expected
-           l-value
+           l-actual
            l-description
            .
            $CATCHPARAMS.
@@ -46,14 +46,14 @@
                ==!W== by ==expected==
                ==!N== by ==2==.
            copy "catchx.pdv" replacing
-               ==!W== by ==value==
+               ==!W== by ==actual==
                ==!N== by ==3==.
            copy "catchx.pdv" replacing
                ==!W== by ==description==
                ==!N== by ==4==.
 
            call "assert-logic"
-              using w-operator w-expected w-value
+              using w-operator w-expected w-actual
               giving w-return-value.
 
            initialize w-display-decription
@@ -84,7 +84,7 @@
                  " -- Expected "
                  w-expected
                  ". It was instead "
-                 w-value
+                 w-actual
                  delimited by STRING-LIMIT
                  into w-display-decription
                  pointer w-string-pointer
