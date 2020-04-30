@@ -17,7 +17,7 @@
 
        77  w-operator pic x(16) value EQ.
        77  w-expected pic x(MEMBERS-DIMENSION) value spaces.
-       77  w-value pic x(MEMBERS-DIMENSION) value spaces.
+       77  w-actual pic x(MEMBERS-DIMENSION) value spaces.
 
        77  w-array-data-length pic 9(09) value 0.
        copy "array.cpy"
@@ -25,15 +25,15 @@
 
        linkage section.
        77  l-operator pic x(MAX-LINKAGE).
-       77  l-expected pic x(MEMBERS-DIMENSION).
-       77  l-value pic x(MEMBERS-DIMENSION).
+       77  l-expected pic x(MAX-LINKAGE).
+       77  l-actual pic x(MAX-LINKAGE).
 
        77  d-array-data pic x(MAX-LINKAGE).
 
        procedure division using
            l-operator
            l-expected
-           l-value
+           l-actual
 
            d-array-data
            .
@@ -47,7 +47,7 @@
                ==!W== by ==expected==
                ==!N== by ==2==.
            copy "catchx.pdv" replacing
-               ==!W== by ==value==
+               ==!W== by ==actual==
                ==!N== by ==3==.
 
            evaluate w-operator
@@ -60,7 +60,7 @@
            goback giving KO.
 
        equality.
-           if w-value = w-expected
+           if w-actual = w-expected
               goback giving OK
            else
               goback giving KO
@@ -69,7 +69,7 @@
            exit.
 
        array-equality.
-           move w-value to w-array.
+           move w-actual to w-array.
            compute w-array-data-length =
               w-array-length * w-array-element-sz
            end-compute.
@@ -81,9 +81,9 @@
               goback giving KO
            end-if.
 
-           move d-array-data(1:w-array-data-length) to w-value
+           move d-array-data(1:w-array-data-length) to w-actual
            copy "movex.pdv" replacing
-               ==!W== by ==value==
+               ==!W== by ==actual==
                ==!N== by ==3==..
        array-equality-ex.
            exit.

@@ -36,6 +36,9 @@
            perform test-append-many
               thru test-append-many-ex.
 
+           perform test-element-overflow
+              thru test-element-overflow-ex.
+
 
            cancel "array".
            goback.
@@ -92,6 +95,22 @@
 
            call "array:free" using w-array.
        test-append-many-ex.
+           exit.
+
+       test-element-overflow.
+           call "array:new" using w-array length of w-str-element.
+           initialize w-expected-array-str-tbl.
+           move "0123456789" to w-expected-array-str-tbl.
+           call "array:append" using w-array "01234567891".
+           call "assert"
+              using ARRAY-EQ
+                    w-expected-array-str-tbl
+                    w-array
+                    "when you append an element that exceeds the element
+      -             "size, it should be truncated".
+
+           call "array:free" using w-array.
+       test-element-overflow-ex.
            exit.
 
 
