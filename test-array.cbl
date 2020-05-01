@@ -25,8 +25,16 @@
 
 
        linkage section.
+       01  d-array-str-tbl value spaces.
+           05 d-array-str-arr
+           pic x(STR-EL-SZ)
+           occurs 200000000
+           depending on w-array-length.
 
-       procedure division.
+       procedure division using
+
+           d-array-str-tbl
+           .
            call "array".
 
            perform test-allocation
@@ -131,6 +139,38 @@
                     w-actual
                     "it should be possible to read an element with 0 bas
       -             "ed indexing system".
+
+           move "test2" to w-expected.
+           initialize w-actual.
+           call "array:append" using w-array w-expected.
+           call "array:get" using w-array w-actual 1.
+
+           call "assert"
+              using EQ
+                    w-expected
+                    w-actual
+                    "it should be possible to read elements with 0 based
+      -             "indexing system".
+
+           move "test3" to w-expected.
+           initialize w-actual.
+           call "array:append" using w-array w-expected.
+           call "array:get" using w-array w-actual 2.
+
+           call "assert"
+              using EQ
+                    w-expected
+                    w-actual
+                    "it should be possible to read elements with 0 based
+      -             "indexing system".
+
+           set address of d-array-str-tbl to w-array-ptr.
+           call "assert"
+              using EQ
+                    w-expected
+                    d-array-str-arr(3)
+                    "it should be possible to read elements dereferencin
+      -             "g the array with a linkage table".
 
            call "array:free" using w-array.
        test-get-of-an-element-ex.
