@@ -1,4 +1,5 @@
        78  MAX-LINKAGE value 2000000000.
+       78  MAX-NUMBER-SIZE value 18.
        78  OK value 0.
        78  KO value 1.
 

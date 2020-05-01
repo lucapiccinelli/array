@@ -22,11 +22,15 @@
        77  w-old-capacity   pic 9(09) value 0.
        77  w-offset-ptr usage pointer value 0.
        77  w-tmp-ptr usage pointer value 0.
+       77  w-index pic 9(MAX-NUMBER-SIZE).
+       77  w-out-element pic x(2048).
 
        linkage section.
        copy "array.cpy" replacing ==!PREFIX!== by ==l-==.
        77  l-element-sz pic 9(09).
        77  l-element pic x(MAX-LINKAGE).
+       77  l-out-element pic x(MAX-LINKAGE).
+       77  l-index pic 9(MAX-NUMBER-SIZE).
 
        77  d-array pic x(MAX-LINKAGE).
 
@@ -89,6 +93,24 @@
            copy "movex.pdv" replacing
                ==!W== by ==array==
                ==!N== by ==1==.
+           $RETURN.
+
+
+       entry "array:get" using l-array l-out-element l-index.
+           $CATCHPARAMS.
+           copy "catchx.pdv" replacing
+               ==!W== by ==array==
+               ==!N== by ==1==.
+           copy "catch9.pdv" replacing
+               ==!W== by ==index==
+               ==!N== by ==3==.
+
+           compute w-offset-ptr =
+              w-array-ptr + (w-array-element-sz * w-index).
+           set address of d-array to w-offset-ptr.
+           move d-array(1:w-array-element-sz)
+              to l-out-element(1:w-args-size(2)).
+
            $RETURN.
 
        post-process.

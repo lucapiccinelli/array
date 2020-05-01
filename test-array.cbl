@@ -14,6 +14,8 @@
 
        78  STR-EL-SZ value 10.
        77  w-str-element pic x(STR-EL-SZ).
+       77  w-actual pic x(2048).
+       77  w-expected pic x(2048).
 
        copy "array.cpy" replacing ==!PREFIX!== by ==w-==.
        copy "array.cpy" replacing ==!PREFIX!== by ==w-expected-==.
@@ -38,6 +40,9 @@
 
            perform test-element-overflow
               thru test-element-overflow-ex.
+
+           perform test-get-of-an-element
+              thru test-get-of-an-element-ex.
 
 
            cancel "array".
@@ -111,6 +116,24 @@
 
            call "array:free" using w-array.
        test-element-overflow-ex.
+           exit.
+
+       test-get-of-an-element.
+           call "array:new" using w-array length of w-str-element.
+           move "test" to w-expected.
+           initialize w-actual.
+           call "array:append" using w-array w-expected.
+           call "array:get" using w-array w-actual 0.
+
+           call "assert"
+              using EQ
+                    w-expected
+                    w-actual
+                    "it should be possible to read an element with 0 bas
+      -             "ed indexing system".
+
+           call "array:free" using w-array.
+       test-get-of-an-element-ex.
            exit.
 
 
