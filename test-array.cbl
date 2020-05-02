@@ -13,9 +13,13 @@
        copy "definitions.cpy".
 
        78  STR-EL-SZ value 10.
+       78  NUM-EL-SZ value 10.
        77  w-str-element pic x(STR-EL-SZ).
+       77  w-num-element pic 9(NUM-EL-SZ) value 0.
        77  w-actual pic x(2048).
+       77  w-actual-num pic 9(NUM-EL-SZ).
        77  w-expected pic x(2048).
+       77  w-expected-num pic 9(NUM-EL-SZ).
 
        copy "array.cpy" replacing ==!PREFIX!== by ==w-==.
        copy "array.cpy" replacing ==!PREFIX!== by ==w-expected-==.
@@ -23,11 +27,20 @@
        01  w-expected-array-str-tbl value spaces.
            05 w-expected-array-str-arr pic x(STR-EL-SZ) occurs 100.
 
+       01  w-expected-array-num-tbl value zeros.
+           05 w-expected-array-num-arr pic x(NUM-EL-SZ) occurs 100.
+
 
        linkage section.
        01  d-array-str-tbl value spaces.
            05 d-array-str-arr
            pic x(STR-EL-SZ)
+           occurs 200000000
+           depending on w-array-length.
+
+       01  d-array-num-tbl value spaces.
+           05 d-array-num-arr
+           pic x(NUM-EL-SZ)
            occurs 200000000
            depending on w-array-length.
 
@@ -54,6 +67,12 @@
 
            perform test-insert
               thru test-insert-ex.
+
+           perform test-append-and-get-of-a-numeric-value
+              thru test-append-and-get-of-a-numeric-value-ex.
+
+           perform test-sorting
+              thru test-sorting-ex.
 
            cancel "array".
            goback.
@@ -212,4 +231,42 @@
 
            call "array:free" using w-array.
        test-insert-ex.
+           exit.
+
+       test-append-and-get-of-a-numeric-value.
+           call "array:new" using w-array length of w-num-element.
+           move 42 to w-num-element
+           call "array:append" using w-array w-num-element.
+           move 43 to w-expected-num
+           call "array:append" using w-array w-expected-num.
+           move 44 to w-num-element
+           call "array:append" using w-array w-num-element.
+
+           call "array:get" using w-array w-actual-num 1
+
+           call "assert"
+              using EQ
+                    w-expected-num
+                    w-actual-num
+                    "array works also with numbers".
+           call "array:free" using w-array.
+       test-append-and-get-of-a-numeric-value-ex.
+           exit.
+
+       test-sorting.
+           call "array:new" using w-array length of w-num-element.
+      *     call "array:append" using w-array 42.
+      *     move 43 to w-expected-num.
+      *     call "array:append" using w-array w-expected-num.
+      *     call "array:append" using w-array 44.
+
+      *     call "array:get" using w-array w-actual-num 1
+
+      *     call "assert"
+      *        using EQ
+      *              w-expected-num
+      *              w-actual-num
+      *              "array works also with numbers".
+           call "array:free" using w-array.
+       test-sorting-ex.
            exit.
