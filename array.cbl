@@ -19,8 +19,10 @@
        copy "array.cpy" replacing ==!PREFIX!== by ==w-==.
        77  w-element-sz pic 9(09) value 0.
        77  w-capacity   pic 9(09) value 0.
-       77  w-old-capacity   pic 9(09) value 0.
+       77  w-old-capacity  pic 9(09) value 0.
+       77  w-bytes-to-shift  pic 9(09) value 0.
        77  w-offset-ptr usage pointer value 0.
+       77  w-where-to-move-ptr usage pointer value 0.
        77  w-tmp-ptr usage pointer value 0.
        77  w-index pic 9(MAX-NUMBER-SIZE).
        77  w-out-element pic x(2048).
@@ -65,6 +67,10 @@
                ==!W== by ==array==
                ==!N== by ==1==.
 
+           if w-array-ptr = 0
+              $RETURN
+           end-if.
+
            call "m$free" using w-array-ptr.
            initialize w-array.
 
@@ -80,11 +86,46 @@
                ==!W== by ==array==
                ==!N== by ==1==.
 
-           if w-array-length = w-array-capacity
-              perform realloc thru realloc-ex
-           end-if.
+           perform realloc thru realloc-ex.
            compute w-offset-ptr =
               w-array-ptr + (w-array-element-sz * w-array-length).
+           set address of d-array to w-offset-ptr.
+           move l-element(1:w-args-size(2))
+              to d-array(1:w-array-element-sz).
+           add 1 to w-array-length.
+
+           copy "movex.pdv" replacing
+               ==!W== by ==array==
+               ==!N== by ==1==.
+           $RETURN.
+
+       entry "array:insert" using l-array l-element l-index.
+           $CATCHPARAMS.
+           copy "catchx.pdv" replacing
+               ==!W== by ==array==
+               ==!N== by ==1==.
+           copy "catch9.pdv" replacing
+               ==!W== by ==index==
+               ==!N== by ==3==.
+
+           if w-index >= w-array-length
+              $RETURN
+           end-if.
+
+           perform realloc thru realloc-ex.
+           compute w-offset-ptr =
+              w-array-ptr + (w-array-element-sz * w-index).
+           add w-array-element-sz to w-offset-ptr
+              giving w-where-to-move-ptr.
+           compute w-bytes-to-shift =
+              (w-array-length - w-index) * w-array-element-sz
+           end-compute.
+
+           call "m$copy"
+              using w-where-to-move-ptr
+                    w-offset-ptr
+                    w-bytes-to-shift.
+
            set address of d-array to w-offset-ptr.
            move l-element(1:w-args-size(2))
               to d-array(1:w-array-element-sz).
@@ -123,6 +164,10 @@
            exit.
 
        realloc.
+           if w-array-length < w-array-capacity
+              exit paragraph
+           end-if
+
            compute w-old-capacity = w-array-capacity * w-element-sz.
            multiply w-array-capacity by 2 giving w-array-capacity.
            move w-array-ptr to w-tmp-ptr.

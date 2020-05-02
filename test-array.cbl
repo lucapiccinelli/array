@@ -52,6 +52,8 @@
            perform test-get-of-an-element
               thru test-get-of-an-element-ex.
 
+           perform test-insert
+              thru test-insert-ex.
 
            cancel "array".
            goback.
@@ -176,4 +178,38 @@
        test-get-of-an-element-ex.
            exit.
 
+       test-insert.
+           call "array:new" using w-array length of w-str-element.
+           initialize w-expected-array-str-tbl.
+           move "bla" to w-expected-array-str-arr(1).
+           move "bla3" to w-expected-array-str-arr(2).
+           move "bla2" to w-expected-array-str-arr(3).
+           call "array:append" using w-array "bla".
+           call "array:append" using w-array "bla2".
+           call "array:insert" using w-array "bla3" 1.
+           call "assert"
+              using ARRAY-EQ
+                    w-expected-array-str-tbl
+                    w-array
+                    "after insert, array should contain a new element in
+      -             "the right position".
+           move 3 to w-expected-array-length.
+           call "assert" using EQ w-expected-array-length w-array-length
+              "after inserting, array length should increment".
 
+           call "array:insert" using w-array "bla4" 3.
+           call "assert"
+              using ARRAY-EQ
+                    w-expected-array-str-tbl
+                    w-array
+                    "after inserting in a position that is greater than
+      -             "current maximum index, it should stay invariate"
+           move 3 to w-expected-array-length.
+           call "assert" using EQ w-expected-array-length w-array-length
+              "after inserting in a position that is greater than curren
+      -       "t maximum index, it should stay invariate also in length"
+              .
+
+           call "array:free" using w-array.
+       test-insert-ex.
+           exit.
