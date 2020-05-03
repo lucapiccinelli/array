@@ -111,20 +111,7 @@
            if w-index >= w-array-length
               $RETURN
            end-if.
-
-           perform realloc thru realloc-ex.
-           compute w-offset-ptr =
-              w-array-ptr + (w-array-element-sz * w-index).
-           add w-array-element-sz to w-offset-ptr
-              giving w-where-to-move-ptr.
-           compute w-bytes-to-shift =
-              (w-array-length - w-index) * w-array-element-sz
-           end-compute.
-
-           call "m$copy"
-              using w-where-to-move-ptr
-                    w-offset-ptr
-                    w-bytes-to-shift.
+           perform shift-the-array thru shift-the-array-ex.
 
            set address of d-array to w-offset-ptr.
            move l-element(1:w-args-size(2))
@@ -192,5 +179,30 @@
            initialize w-tmp-ptr.
        realloc-ex.
            exit.
+
+       compute-shift-params.
+           perform realloc thru realloc-ex.
+           compute w-offset-ptr =
+              w-array-ptr + (w-array-element-sz * w-index).
+           add w-array-element-sz to w-offset-ptr
+              giving w-where-to-move-ptr.
+           compute w-bytes-to-shift =
+              (w-array-length - w-index) * w-array-element-sz
+           end-compute.
+
+       compute-shift-params-ex.
+           exit.
+
+       shift-the-array.
+           perform compute-shift-params thru compute-shift-params-ex.
+           call "m$copy"
+              using w-where-to-move-ptr
+                    w-offset-ptr
+                    w-bytes-to-shift.
+
+       shift-the-array-ex.
+           exit.
+
+
 
 
