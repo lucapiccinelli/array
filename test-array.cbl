@@ -16,6 +16,11 @@
        78  NUM-EL-SZ value 10.
        77  w-str-element pic x(STR-EL-SZ).
        77  w-num-element pic 9(NUM-EL-SZ) value 0.
+       77  w-num-element2 pic 9(NUM-EL-SZ) value 0.
+       77  w-max-elements pic 9(NUM-EL-SZ) value 0.
+       77  j pic 9(NUM-EL-SZ) value 0.
+       77  i pic 9(NUM-EL-SZ) value 0.
+       77  i-d redefines i pic 9v99999999.
        77  w-actual pic x(2048).
        77  w-actual-num pic 9(NUM-EL-SZ).
        77  w-expected pic x(2048).
@@ -75,6 +80,7 @@
               thru test-sorting-ex.
 
            cancel "array".
+           cancel "assert".
            goback.
 
        test-allocation.
@@ -254,19 +260,52 @@
            exit.
 
        test-sorting.
-           call "array:new" using w-array length of w-num-element.
-      *     call "array:append" using w-array 42.
-      *     move 43 to w-expected-num.
-      *     call "array:append" using w-array w-expected-num.
-      *     call "array:append" using w-array 44.
+           call "array:new" using w-array length of i.
+           move 1000 to w-max-elements.
+           perform fill-the-array-with-random-numbers
+              thru fill-the-array-with-random-numbers-ex.
 
-      *     call "array:get" using w-array w-actual-num 1
+           call "array:sort" using w-array
+           initialize i.
 
-      *     call "assert"
-      *        using EQ
-      *              w-expected-num
-      *              w-actual-num
-      *              "array works also with numbers".
+           perform check-that-array-is-sorted
+              thru check-that-array-is-sorted-ex
+
+           call "assert"
+              using EQ
+                    w-max-elements
+                    i
+                    "array is sorted".
+
            call "array:free" using w-array.
        test-sorting-ex.
            exit.
+
+
+       fill-the-array-with-random-numbers.
+              thru fill-the-array-with-random-numbers-ex
+           perform w-max-elements times
+              move function random() to i-d
+              call "array:append" using w-array i
+           end-perform
+
+       fill-the-array-with-random-numbers-ex.
+           exit.
+
+
+       check-that-array-is-sorted.
+              thru check-that-array-is-sorted-ex.
+           perform varying i from 1 by 1 until i < w-max-elements
+              subtract 1 from i giving j
+              call "array:get" using w-array w-num-element j
+              call "array:get" using w-array w-num-element2 i
+
+              if w-num-element > w-num-element2
+                 exit perform
+              end-if
+           end-perform.
+
+       check-that-array-is-sorted-ex.
+           exit.
+
+

@@ -157,6 +157,21 @@
        post-process.
            goback.
 
+       entry "array:sort" using l-array l-element l-index.
+           $CATCHPARAMS.
+           copy "catchx.pdv" replacing
+               ==!W== by ==array==
+               ==!N== by ==1==.
+           copy "catch9.pdv" replacing
+               ==!W== by ==index==
+               ==!N== by ==3==.
+
+           if w-index >= w-array-length
+              $RETURN
+           end-if.
+           $RETURN.
+
+
        alloc.
            compute w-capacity = w-array-capacity * w-element-sz.
            call "m$alloc" using w-capacity w-array-ptr.
