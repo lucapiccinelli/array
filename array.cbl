@@ -89,10 +89,8 @@
            perform realloc thru realloc-ex.
            compute w-offset-ptr =
               w-array-ptr + (w-array-element-sz * w-array-length).
-           set address of d-array to w-offset-ptr.
-           move l-element(1:w-args-size(2))
-              to d-array(1:w-array-element-sz).
-           add 1 to w-array-length.
+           perform move-linkage-value-to-the-array
+              thru move-linkage-value-to-the-array-ex.
 
            copy "movex.pdv" replacing
                ==!W== by ==array==
@@ -111,12 +109,10 @@
            if w-index >= w-array-length
               $RETURN
            end-if.
+           perform realloc thru realloc-ex.
            perform shift-the-array thru shift-the-array-ex.
-
-           set address of d-array to w-offset-ptr.
-           move l-element(1:w-args-size(2))
-              to d-array(1:w-array-element-sz).
-           add 1 to w-array-length.
+           perform move-linkage-value-to-the-array
+              thru move-linkage-value-to-the-array-ex.
 
            copy "movex.pdv" replacing
                ==!W== by ==array==
@@ -181,7 +177,6 @@
            exit.
 
        compute-shift-params.
-           perform realloc thru realloc-ex.
            compute w-offset-ptr =
               w-array-ptr + (w-array-element-sz * w-index).
            add w-array-element-sz to w-offset-ptr
@@ -202,6 +197,16 @@
 
        shift-the-array-ex.
            exit.
+
+       move-linkage-value-to-the-array.
+           set address of d-array to w-offset-ptr.
+           move l-element(1:w-args-size(2))
+              to d-array(1:w-array-element-sz).
+           add 1 to w-array-length.
+
+       move-linkage-value-to-the-array-ex.
+           exit.
+
 
 
 

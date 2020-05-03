@@ -217,7 +217,7 @@
                     w-expected-array-str-tbl
                     w-array
                     "after insert, array should contain a new element in
-      -             "the right position".
+      -             " the right position".
            move 3 to w-expected-array-length.
            call "assert" using EQ w-expected-array-length w-array-length
               "after inserting, array length should increment".
