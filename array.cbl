@@ -27,6 +27,20 @@
        77  w-index pic 9(MAX-NUMBER-SIZE).
        77  w-out-element pic x(2048).
 
+       01  w-qsort-stack-tbl value zeros.
+           03  w-qsort-stack occurs 100.
+               05 w-qsort-stack-from pic 9(09).
+               05 w-qsort-stack-to   pic 9(09).
+
+       77  w-qsort-stack-idx pic 9(09) value 0.
+       77  w-qsort-pivot-idx pic 9(09) value 0.
+       77  w-from pic 9(09) value 0.
+       77  w-to   pic 9(09) value 0.
+       77  w-step pic 9(09) value 0.
+
+       77  w-swap-tmp-ptr usage pointer value 0.
+       77  w-pivot-value-ptr usage pointer value 0.
+
        linkage section.
        copy "array.cpy" replacing ==!PREFIX!== by ==l-==.
        77  l-element-sz pic 9(09).
@@ -35,6 +49,8 @@
        77  l-index pic 9(MAX-NUMBER-SIZE).
 
        77  d-array pic x(MAX-LINKAGE).
+       77  d-swap-tmp pic x(MAX-LINKAGE).
+       77  d-pivot-value pic x(MAX-LINKAGE).
 
        procedure division using
            d-array
@@ -140,18 +156,35 @@
        post-process.
            goback.
 
-       entry "array:sort" using l-array l-element l-index.
+       entry "array:sort" using l-array.
            $CATCHPARAMS.
            copy "catchx.pdv" replacing
                ==!W== by ==array==
                ==!N== by ==1==.
-           copy "catch9.pdv" replacing
-               ==!W== by ==index==
-               ==!N== by ==3==.
 
-           if w-index >= w-array-length
-              $RETURN
-           end-if.
+           call "m$alloc" using w-pivot-value-ptr w-array-element-sz.
+           call "m$alloc" using w-swap-tmp-ptr w-array-element-sz.
+           set address of d-pivot-value to w-pivot-value-ptr.
+           set address of d-swap-tmp to w-swap-tmp-ptr.
+           set address of d-array to w-array-ptr.
+           move zeros to w-qsort-stack-tbl.
+           move w-element-sz to w-step.
+
+           move 1 to w-qsort-stack-idx
+           move 1 to w-qsort-stack(w-qsort-stack-idx)
+           move w-array-length to w-qsort-stack(w-qsort-stack-idx)
+
+           perform until w-qsort-stack-idx > 0
+              move w-qsort-stack(w-qsort-stack-idx) to w-from
+              move w-qsort-stack(w-qsort-stack-idx) to w-to
+              subtract 1 from w-qsort-stack-idx
+
+              compute w-qsort-pivot-idx = w-from + (w-to - w-from) / 2
+           end-perform.
+
+           call "m$free" using w-pivot-value-ptr.
+           call "m$free" using w-swap-tmp-ptr.
+
            $RETURN.
 
 
