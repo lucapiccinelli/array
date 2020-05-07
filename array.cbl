@@ -36,7 +36,14 @@
        77  w-qsort-pivot-idx pic 9(09) value 0.
        77  w-from pic 9(09) value 0.
        77  w-to   pic 9(09) value 0.
+       77  w-from-tmp pic 9(09) value 0.
+       77  w-to-tmp   pic 9(09) value 0.
+       77  i      pic 9(09) value 0.
+       77  j      pic 9(09) value 0.
+       77  w-swap-idx1 pic 9(09) value 0.
+       77  w-swap-idx2 pic 9(09) value 0.
        77  w-step pic 9(09) value 0.
+       77  w-store-idx pic 9(09) value 0.
 
        77  w-swap-tmp-ptr usage pointer value 0.
        77  w-pivot-value-ptr usage pointer value 0.
@@ -162,24 +169,31 @@
                ==!W== by ==array==
                ==!N== by ==1==.
 
-           call "m$alloc" using w-pivot-value-ptr w-array-element-sz.
-           call "m$alloc" using w-swap-tmp-ptr w-array-element-sz.
+           call "m$alloc" using w-array-element-sz w-pivot-value-ptr.
+           call "m$alloc" using w-array-element-sz w-swap-tmp-ptr.
            set address of d-pivot-value to w-pivot-value-ptr.
            set address of d-swap-tmp to w-swap-tmp-ptr.
            set address of d-array to w-array-ptr.
            move zeros to w-qsort-stack-tbl.
            move w-element-sz to w-step.
 
-           move 1 to w-qsort-stack-idx
-           move 1 to w-qsort-stack(w-qsort-stack-idx)
-           move w-array-length to w-qsort-stack(w-qsort-stack-idx)
+           move 1 to w-qsort-stack-idx.
+           move 1 to w-qsort-stack-from(w-qsort-stack-idx).
+           compute w-qsort-stack-to(w-qsort-stack-idx) =
+              ((w-array-length - 1) * w-array-element-sz) + 1
+           end-compute.
 
-           perform until w-qsort-stack-idx > 0
-              move w-qsort-stack(w-qsort-stack-idx) to w-from
-              move w-qsort-stack(w-qsort-stack-idx) to w-to
-              subtract 1 from w-qsort-stack-idx
+           perform until w-qsort-stack-idx <= 0
+              perform pop-stack thru pop-stack-ex
+              if w-from >= w-to
+                 exit perform
+              end-if
 
               compute w-qsort-pivot-idx = w-from + (w-to - w-from) / 2
+
+              perform qpartition thru qpartition-ex
+              perform push-left-partition thru push-left-partition-ex
+              perform push-right-partition thru push-right-partition-ex
            end-perform.
 
            call "m$free" using w-pivot-value-ptr.
@@ -187,6 +201,50 @@
 
            $RETURN.
 
+       qpartition.
+           move d-array(w-qsort-pivot-idx:w-array-element-sz)
+              to d-pivot-value(1:w-array-element-sz).
+
+           move w-qsort-pivot-idx to w-swap-idx1.
+           move w-to to w-swap-idx2.
+           perform swap thru swap-ex.
+
+           move w-from to w-store-idx.
+           perform varying i from w-from by w-step
+              until i >= w-to
+
+              if d-array(i:w-array-element-sz) <
+                 d-pivot-value(1:w-array-element-sz)
+
+                 move i to w-swap-idx1
+                 move w-store-idx to w-swap-idx2
+                 perform swap thru swap-ex
+                 add w-step to w-store-idx
+
+              end-if
+
+           end-perform.
+           move w-to to w-swap-idx1.
+           move w-store-idx to w-swap-idx2.
+           perform swap thru swap-ex.
+
+           move w-store-idx to w-qsort-pivot-idx.
+       qpartition-ex.
+           exit.
+
+       swap.
+           if w-swap-idx1 = w-swap-idx2
+              exit paragraph
+           end-if.
+
+           move d-array(w-swap-idx1:w-array-element-sz)
+              to d-swap-tmp(1:w-array-element-sz).
+           move d-array(w-swap-idx2:w-array-element-sz)
+              to d-array(w-swap-idx1:w-array-element-sz).
+           move d-swap-tmp(1:w-array-element-sz)
+              to d-array(w-swap-idx2:w-array-element-sz).
+       swap-ex.
+           exit.
 
        alloc.
            compute w-capacity = w-array-capacity * w-element-sz.
@@ -239,6 +297,40 @@
 
        move-linkage-value-to-the-array-ex.
            exit.
+
+       pop-stack.
+           move w-qsort-stack-from(w-qsort-stack-idx) to w-from.
+           move w-qsort-stack-to(w-qsort-stack-idx) to w-to.
+           subtract 1 from w-qsort-stack-idx.
+       pop-stack-ex.
+           exit.
+
+       push-left-partition.
+           add w-step to w-qsort-pivot-idx giving w-from-tmp.
+           if w-from-tmp >= w-to
+              exit paragraph
+           end-if.
+
+           add 1 to w-qsort-stack-idx.
+           move w-from-tmp to w-qsort-stack-from(w-qsort-stack-idx).
+           move w-to to w-qsort-stack-to(w-qsort-stack-idx).
+       push-left-partition-ex.
+           exit.
+
+       push-right-partition.
+           subtract w-step from w-qsort-pivot-idx giving w-to-tmp.
+           if w-from >= w-to-tmp
+              exit paragraph
+           end-if.
+
+           add 1 to w-qsort-stack-idx.
+           move w-from to w-qsort-stack-from(w-qsort-stack-idx).
+           move w-to-tmp to w-qsort-stack-to(w-qsort-stack-idx).
+       push-right-partition-ex.
+           exit.
+
+
+
 
 
 

@@ -76,6 +76,8 @@
            perform test-append-and-get-of-a-numeric-value
               thru test-append-and-get-of-a-numeric-value-ex.
 
+           perform test-sortingx
+              thru test-sortingx-ex.
            perform test-sorting
               thru test-sorting-ex.
 
@@ -281,20 +283,42 @@
        test-sorting-ex.
            exit.
 
+       test-sortingx.
+           call "array:new" using w-array length of w-str-element.
+           move "aaaaaaaaaa" to w-expected-array-str-arr(1).
+           move "bbbbbbbbbb" to w-expected-array-str-arr(2).
+           move "cccccccccc" to w-expected-array-str-arr(3).
+           move "dddddddddd" to w-expected-array-str-arr(4).
+           move "eeeeeeeeee" to w-expected-array-str-arr(5).
+
+           call "array:append" using w-array "bbbbbbbbbb".
+           call "array:append" using w-array "aaaaaaaaaa".
+           call "array:append" using w-array "eeeeeeeeee".
+           call "array:append" using w-array "dddddddddd".
+           call "array:append" using w-array "cccccccccc".
+           call "array:sort" using w-array.
+
+           call "assert"
+              using ARRAY-EQ
+                    w-expected-array-str-tbl
+                    w-array
+                    "array of strings is sorted".
+
+           call "array:free" using w-array.
+       test-sortingx-ex.
+           exit.
+
 
        fill-the-array-with-random-numbers.
-              thru fill-the-array-with-random-numbers-ex
            perform w-max-elements times
               move function random() to i-d
               call "array:append" using w-array i
-           end-perform
-
+           end-perform.
        fill-the-array-with-random-numbers-ex.
            exit.
 
 
        check-that-array-is-sorted.
-              thru check-that-array-is-sorted-ex.
            perform varying i from 1 by 1 until i < w-max-elements
               subtract 1 from i giving j
               call "array:get" using w-array w-num-element j
@@ -304,7 +328,6 @@
                  exit perform
               end-if
            end-perform.
-
        check-that-array-is-sorted-ex.
            exit.
 
