@@ -185,11 +185,14 @@
 
            perform until w-qsort-stack-idx <= 0
               perform pop-stack thru pop-stack-ex
-              if w-from >= w-to
-                 exit perform
+              if w-from >= w-to or (w-to - w-from < w-step)
+                 exit perform cycle
               end-if
 
-              compute w-qsort-pivot-idx = w-from + (w-to - w-from) / 2
+              compute w-qsort-pivot-idx = w-from +
+                 function integer-part((w-to - w-from) / (2 * w-step))
+                 * w-step
+              end-compute
 
               perform qpartition thru qpartition-ex
               perform push-left-partition thru push-left-partition-ex
@@ -305,7 +308,7 @@
        pop-stack-ex.
            exit.
 
-       push-left-partition.
+       push-right-partition.
            add w-step to w-qsort-pivot-idx giving w-from-tmp.
            if w-from-tmp >= w-to
               exit paragraph
@@ -314,10 +317,10 @@
            add 1 to w-qsort-stack-idx.
            move w-from-tmp to w-qsort-stack-from(w-qsort-stack-idx).
            move w-to to w-qsort-stack-to(w-qsort-stack-idx).
-       push-left-partition-ex.
+       push-right-partition-ex.
            exit.
 
-       push-right-partition.
+       push-left-partition.
            subtract w-step from w-qsort-pivot-idx giving w-to-tmp.
            if w-from >= w-to-tmp
               exit paragraph
@@ -326,7 +329,7 @@
            add 1 to w-qsort-stack-idx.
            move w-from to w-qsort-stack-from(w-qsort-stack-idx).
            move w-to-tmp to w-qsort-stack-to(w-qsort-stack-idx).
-       push-right-partition-ex.
+       push-left-partition-ex.
            exit.
 
 

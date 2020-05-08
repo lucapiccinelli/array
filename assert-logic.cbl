@@ -75,15 +75,15 @@
            end-compute.
            set address of d-array-data to w-array-ptr.
 
+           move d-array-data(1:w-array-data-length) to w-actual
+           copy "movex.pdv" replacing
+               ==!W== by ==actual==
+               ==!N== by ==3==..
+
            if d-array-data(1:w-array-data-length) = w-expected
               goback giving OK
            else
               goback giving KO
            end-if.
-
-           move d-array-data(1:w-array-data-length) to w-actual
-           copy "movex.pdv" replacing
-               ==!W== by ==actual==
-               ==!N== by ==3==..
        array-equality-ex.
            exit.
