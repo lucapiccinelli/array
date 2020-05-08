@@ -47,6 +47,8 @@
 
        77  w-swap-tmp-ptr usage pointer value 0.
        77  w-pivot-value-ptr usage pointer value 0.
+       77  w-double-step pic 9(09) value 0.
+       77  w-partition-size pic 9(09) value 0.
 
        linkage section.
        copy "array.cpy" replacing ==!PREFIX!== by ==l-==.
@@ -176,6 +178,7 @@
            set address of d-array to w-array-ptr.
            move zeros to w-qsort-stack-tbl.
            move w-element-sz to w-step.
+           multiply w-step by 2 giving w-double-step.
 
            move 1 to w-qsort-stack-idx.
            move 1 to w-qsort-stack-from(w-qsort-stack-idx).
@@ -185,12 +188,14 @@
 
            perform until w-qsort-stack-idx <= 0
               perform pop-stack thru pop-stack-ex
-              if w-from >= w-to or (w-to - w-from < w-step)
+              subtract w-from from w-to giving w-partition-size
+
+              if w-from >= w-to or (w-partition-size < w-step)
                  exit perform cycle
               end-if
 
               compute w-qsort-pivot-idx = w-from +
-                 function integer-part((w-to - w-from) / (2 * w-step))
+                 function integer-part(w-partition-size / w-double-step)
                  * w-step
               end-compute
 
@@ -205,6 +210,23 @@
            $RETURN.
 
        qpartition.
+           if w-partition-size = 0
+              exit paragraph
+           end-if.
+           if w-partition-size = w-step
+              if d-array(w-from:w-array-element-sz) >
+                 d-array(w-to:w-array-element-sz)
+
+                 move w-from to w-swap-idx1
+                 move w-to to w-swap-idx2
+                 perform swap thru swap-ex
+                 move w-from to w-qsort-pivot-idx
+              else
+                 move w-to to w-qsort-pivot-idx
+              end-if
+              exit paragraph
+           end-if.
+
            move d-array(w-qsort-pivot-idx:w-array-element-sz)
               to d-pivot-value(1:w-array-element-sz).
 

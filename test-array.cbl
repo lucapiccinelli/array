@@ -265,7 +265,7 @@
 
        test-sorting.
            call "array:new" using w-array length of i.
-           move 10000 to w-max-elements.
+           move 100000 to w-max-elements.
            perform fill-the-array-with-random-numbers
               thru fill-the-array-with-random-numbers-ex.
 
