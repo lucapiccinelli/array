@@ -80,7 +80,13 @@
                ==!W== by ==actual==
                ==!N== by ==3==..
 
-           if d-array-data(1:w-array-data-length) = w-expected
+           move w-expected(1:w-array-data-length) to w-expected
+           copy "movex.pdv" replacing
+               ==!W== by ==expected==
+               ==!N== by ==2==..
+
+           if d-array-data(1:w-array-data-length) =
+              w-expected(1:w-array-data-length)
               goback giving OK
            else
               goback giving KO

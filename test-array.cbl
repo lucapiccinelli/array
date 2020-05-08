@@ -13,7 +13,7 @@
        copy "definitions.cpy".
 
        78  STR-EL-SZ value 10.
-       78  NUM-EL-SZ value 10.
+       78  NUM-EL-SZ value 9.
        77  w-str-element pic x(STR-EL-SZ).
        77  w-num-element pic 9(NUM-EL-SZ) value 0.
        77  w-num-element2 pic 9(NUM-EL-SZ) value 0.
@@ -33,7 +33,7 @@
            05 w-expected-array-str-arr pic x(STR-EL-SZ) occurs 100.
 
        01  w-expected-array-num-tbl value zeros.
-           05 w-expected-array-num-arr pic x(NUM-EL-SZ) occurs 100.
+           05 w-expected-array-num-arr pic 9(NUM-EL-SZ) occurs 100.
 
 
        linkage section.
@@ -78,6 +78,8 @@
 
            perform test-sortingx
               thru test-sortingx-ex.
+           perform test-sortingn
+              thru test-sortingn-ex.
            perform test-sorting
               thru test-sorting-ex.
 
@@ -263,7 +265,7 @@
 
        test-sorting.
            call "array:new" using w-array length of i.
-           move 1000 to w-max-elements.
+           move 10000 to w-max-elements.
            perform fill-the-array-with-random-numbers
               thru fill-the-array-with-random-numbers-ex.
 
@@ -308,6 +310,40 @@
        test-sortingx-ex.
            exit.
 
+       test-sortingn.
+           call "array:new" using w-array length of w-num-element.
+           move 1  to w-expected-array-num-arr(1).
+           move 2  to w-expected-array-num-arr(2).
+           move 3  to w-expected-array-num-arr(3).
+           move 4  to w-expected-array-num-arr(4).
+           move 5  to w-expected-array-num-arr(5).
+           move 11 to w-expected-array-num-arr(6).
+
+           move 1 to w-num-element.
+           call "array:append" using w-array w-num-element.
+           move 2 to w-num-element.
+           call "array:append" using w-array w-num-element.
+           move 3 to w-num-element.
+           call "array:append" using w-array w-num-element.
+           move 4 to w-num-element.
+           call "array:append" using w-array w-num-element.
+           move 5 to w-num-element.
+           call "array:append" using w-array w-num-element.
+           move 11 to w-num-element.
+           call "array:append" using w-array w-num-element.
+
+           call "array:sort" using w-array.
+
+           call "assert"
+              using ARRAY-EQ
+                    w-expected-array-num-tbl
+                    w-array
+                    "array of numbers is sorted".
+
+           call "array:free" using w-array.
+       test-sortingn-ex.
+           exit.
+
 
        fill-the-array-with-random-numbers.
            perform w-max-elements times
@@ -319,7 +355,7 @@
 
 
        check-that-array-is-sorted.
-           perform varying i from 1 by 1 until i < w-max-elements
+           perform varying i from 1 by 1 until i >= w-max-elements
               subtract 1 from i giving j
               call "array:get" using w-array w-num-element j
               call "array:get" using w-array w-num-element2 i
