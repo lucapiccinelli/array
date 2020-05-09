@@ -279,7 +279,7 @@
               using EQ
                     w-max-elements
                     i
-                    "array is sorted".
+                    "big array is sorted".
 
            call "array:free" using w-array.
        test-sorting-ex.

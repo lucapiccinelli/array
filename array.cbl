@@ -171,34 +171,22 @@
                ==!W== by ==array==
                ==!N== by ==1==.
 
-           call "m$alloc" using w-array-element-sz w-pivot-value-ptr.
-           call "m$alloc" using w-array-element-sz w-swap-tmp-ptr.
-           set address of d-pivot-value to w-pivot-value-ptr.
-           set address of d-swap-tmp to w-swap-tmp-ptr.
-           set address of d-array to w-array-ptr.
-           move zeros to w-qsort-stack-tbl.
-           move w-element-sz to w-step.
-           multiply w-step by 2 giving w-double-step.
+           perform initialize-sort
+              thru initialize-sort-ex.
 
-           move 1 to w-qsort-stack-idx.
-           move 1 to w-qsort-stack-from(w-qsort-stack-idx).
-           compute w-qsort-stack-to(w-qsort-stack-idx) =
-              ((w-array-length - 1) * w-array-element-sz) + 1
-           end-compute.
+           perform initialize-stack
+              thru initialize-stack-ex.
 
            perform until w-qsort-stack-idx <= 0
               perform pop-stack thru pop-stack-ex
-              subtract w-from from w-to giving w-partition-size
 
+              subtract w-from from w-to giving w-partition-size
               if w-from >= w-to or (w-partition-size < w-step)
                  exit perform cycle
               end-if
 
-              compute w-qsort-pivot-idx = w-from +
-                 function integer-part(w-partition-size / w-double-step)
-                 * w-step
-              end-compute
-
+              perform compute-pivot
+                 thru compute-pivot-ex
               perform qpartition thru qpartition-ex
               perform push-left-partition thru push-left-partition-ex
               perform push-right-partition thru push-right-partition-ex
@@ -214,16 +202,8 @@
               exit paragraph
            end-if.
            if w-partition-size = w-step
-              if d-array(w-from:w-array-element-sz) >
-                 d-array(w-to:w-array-element-sz)
-
-                 move w-from to w-swap-idx1
-                 move w-to to w-swap-idx2
-                 perform swap thru swap-ex
-                 move w-from to w-qsort-pivot-idx
-              else
-                 move w-to to w-qsort-pivot-idx
-              end-if
+              perform partition-only-two-elemenst
+                 thru partition-only-two-elemenst-ex
               exit paragraph
            end-if.
 
@@ -353,6 +333,53 @@
            move w-to-tmp to w-qsort-stack-to(w-qsort-stack-idx).
        push-left-partition-ex.
            exit.
+
+       initialize-sort.
+           call "m$alloc" using w-array-element-sz w-pivot-value-ptr.
+           call "m$alloc" using w-array-element-sz w-swap-tmp-ptr.
+           set address of d-pivot-value to w-pivot-value-ptr.
+           set address of d-swap-tmp to w-swap-tmp-ptr.
+           set address of d-array to w-array-ptr.
+           move zeros to w-qsort-stack-tbl.
+           move w-element-sz to w-step.
+           multiply w-step by 2 giving w-double-step.
+       initialize-sort-ex.
+           exit.
+
+       initialize-stack.
+           move 1 to w-qsort-stack-idx.
+           move 1 to w-qsort-stack-from(w-qsort-stack-idx).
+           compute w-qsort-stack-to(w-qsort-stack-idx) =
+              ((w-array-length - 1) * w-array-element-sz) + 1
+           end-compute.
+       initialize-stack-ex.
+           exit.
+
+       compute-pivot.
+           compute w-qsort-pivot-idx = w-from +
+              function integer-part(w-partition-size / w-double-step)
+              * w-step
+           end-compute.
+       compute-pivot-ex.
+           exit.
+
+       partition-only-two-elemenst.
+           if d-array(w-from:w-array-element-sz) >
+              d-array(w-to:w-array-element-sz)
+
+              move w-from to w-swap-idx1
+              move w-to to w-swap-idx2
+              perform swap thru swap-ex
+              move w-from to w-qsort-pivot-idx
+           else
+              move w-to to w-qsort-pivot-idx
+           end-if.
+       partition-only-two-elemenst-ex.
+           exit.
+
+
+
+
 
 
 
