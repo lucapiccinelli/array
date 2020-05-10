@@ -26,6 +26,7 @@
        77  w-expected pic x(2048).
        77  w-expected-num pic 9(NUM-EL-SZ).
 
+
        copy "array.cpy" replacing ==!PREFIX!== by ==w-==.
        copy "array.cpy" replacing ==!PREFIX!== by ==w-expected-==.
 
@@ -35,6 +36,15 @@
        01  w-expected-array-num-tbl value zeros.
            05 w-expected-array-num-arr pic 9(NUM-EL-SZ) occurs 100.
 
+       01  w-expected-array-stt-tbl.
+           03 w-expected-array-stt-arr occurs 100.
+              05 w-expected-array-stt-arr-x pic x(25).
+              05 w-expected-array-stt-arr-9 pic 9(08).
+
+       01  w-stt.
+           05 w-stt-x pic x(25) value spaces.
+           05 w-stt-9 pic 9(08) value zeros.
+       78  STT-SZ value length of w-stt.
 
        linkage section.
        01  d-array-str-tbl value spaces.
@@ -82,6 +92,8 @@
               thru test-sortingn-ex.
            perform test-sorting
               thru test-sorting-ex.
+           perform test-sortingn-parts-of-data-structures
+              thru test-sortingn-parts-of-data-structures-ex.
 
            cancel "array".
            cancel "assert".
@@ -265,7 +277,7 @@
 
        test-sorting.
            call "array:new" using w-array length of i.
-           move 100000 to w-max-elements.
+           move 10000 to w-max-elements.
            perform fill-the-array-with-random-numbers
               thru fill-the-array-with-random-numbers-ex.
 
@@ -342,6 +354,51 @@
 
            call "array:free" using w-array.
        test-sortingn-ex.
+           exit.
+
+       test-sortingn-parts-of-data-structures.
+           call "array:new" using w-array length of w-stt.
+           move  1  to w-expected-array-stt-arr-9(1).
+           move "z" to w-expected-array-stt-arr-x(1).
+           move  2  to w-expected-array-stt-arr-9(2).
+           move "v" to w-expected-array-stt-arr-x(2).
+           move  3  to w-expected-array-stt-arr-9(3).
+           move "u" to w-expected-array-stt-arr-x(3).
+           move  4  to w-expected-array-stt-arr-9(4).
+           move "t" to w-expected-array-stt-arr-x(4).
+           move  5  to w-expected-array-stt-arr-9(5).
+           move "s" to w-expected-array-stt-arr-x(5).
+           move  11 to w-expected-array-stt-arr-9(6).
+           move "r" to w-expected-array-stt-arr-x(6).
+
+           call "array:append"
+              using w-array w-expected-array-stt-arr(5).
+           call "array:append"
+              using w-array w-expected-array-stt-arr(3).
+           call "array:append"
+              using w-array w-expected-array-stt-arr(2).
+           call "array:append"
+              using w-array w-expected-array-stt-arr(4).
+           call "array:append"
+              using w-array w-expected-array-stt-arr(6).
+           call "array:append"
+              using w-array w-expected-array-stt-arr(1).
+
+           call "array:sort"
+              using w-array
+                    record-position of w-stt-9
+                    length of w-stt-9
+                    .
+
+           call "assert"
+              using ARRAY-EQ
+                    w-expected-array-stt-tbl
+                    w-array
+                    "array of data structure is sorted with rules on par
+      -             "t of the structure".
+
+           call "array:free" using w-array.
+       test-sortingn-parts-of-data-structures-ex.
            exit.
 
 
