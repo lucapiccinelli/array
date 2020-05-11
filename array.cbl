@@ -46,6 +46,7 @@
        77  w-store-idx pic 9(09) value 0.
 
        77  w-swap-tmp-ptr usage pointer value 0.
+       77  w-array-compare-ptr usage pointer value 0.
        77  w-pivot-value-ptr usage pointer value 0.
        77  w-double-step pic 9(09) value 0.
        77  w-partition-size pic 9(09) value 0.
@@ -62,6 +63,7 @@
        77  l-compare-sz pic 9(09).
 
        77  d-array pic x(MAX-LINKAGE).
+       77  d-array-compare pic x(MAX-LINKAGE).
        77  d-swap-tmp pic x(MAX-LINKAGE).
        77  d-pivot-value pic x(MAX-LINKAGE).
 
@@ -179,11 +181,10 @@
            copy "catchx.pdv" replacing
                ==!W== by ==array==
                ==!N== by ==1==.
-           move 1 to w-compare-offset.
+           move 0 to w-compare-offset.
            copy "catch9.pdv" replacing
                ==!W== by ==compare-offset==
                ==!N== by ==2==.
-           subtract 1 from w-compare-offset.
            move w-array-element-sz to w-compare-sz.
            copy "catch9.pdv" replacing
                ==!W== by ==compare-sz==
@@ -225,9 +226,7 @@
               exit paragraph
            end-if.
 
-           move d-array(
-              w-qsort-pivot-idx +
-              w-compare-offset:w-compare-sz)
+           move d-array-compare(w-qsort-pivot-idx:w-compare-sz)
               to d-pivot-value(1:w-compare-sz).
 
            move w-qsort-pivot-idx to w-swap-idx1.
@@ -235,15 +234,13 @@
            perform swap thru swap-ex.
 
            move w-from to w-store-idx.
-           add w-compare-offset to w-from giving w-from-tmp.
-           add w-compare-offset to w-to giving w-to-tmp.
-           perform varying i from w-from-tmp by w-step
-              until i >= w-to-tmp
+           perform varying i from w-from by w-step
+              until i >= w-to
 
-              if d-array(i:w-compare-sz) <
+              if d-array-compare(i:w-compare-sz) <
                  d-pivot-value(1:w-compare-sz)
 
-                 subtract w-compare-offset from i giving w-swap-idx1
+                 move i to w-swap-idx1
                  move w-store-idx to w-swap-idx2
                  perform swap thru swap-ex
                  add w-step to w-store-idx
@@ -362,6 +359,9 @@
            set address of d-pivot-value to w-pivot-value-ptr.
            set address of d-swap-tmp to w-swap-tmp-ptr.
            set address of d-array to w-array-ptr.
+           add w-compare-offset to w-array-ptr
+              giving w-array-compare-ptr.
+           set address of d-array-compare to w-array-compare-ptr.
            move zeros to w-qsort-stack-tbl.
            move w-element-sz to w-step.
            multiply w-step by 2 giving w-double-step.
@@ -386,8 +386,8 @@
            exit.
 
        partition-only-two-elements.
-           if d-array(w-from + w-compare-offset:w-compare-sz) >
-              d-array(w-to + w-compare-offset:w-compare-sz)
+           if d-array-compare(w-from:w-compare-sz) >
+              d-array-compare(w-to:w-compare-sz)
 
               move w-from to w-swap-idx1
               move w-to to w-swap-idx2
