@@ -32,8 +32,8 @@
                05 w-qsort-stack-from pic 9(09).
                05 w-qsort-stack-to   pic 9(09).
 
-       77  w-qsort-stack-idx pic 9(09) value 0.
-       77  w-qsort-pivot-idx pic 9(09) value 0.
+       77  w-qsort-stack-idx pic  9(09) value 0.
+       77  w-qsort-pivot-idx pic s9(09) value 0.
        77  w-from pic 9(09) value 0.
        77  w-to   pic 9(09) value 0.
        77  w-from-tmp pic 9(09) value 0.
@@ -49,6 +49,8 @@
        77  w-pivot-value-ptr usage pointer value 0.
        77  w-double-step pic 9(09) value 0.
        77  w-partition-size pic 9(09) value 0.
+       77  w-compare-offset pic 9(09).
+       77  w-compare-sz pic 9(09).
 
        linkage section.
        copy "array.cpy" replacing ==!PREFIX!== by ==l-==.
@@ -56,6 +58,8 @@
        77  l-element pic x(MAX-LINKAGE).
        77  l-out-element pic x(MAX-LINKAGE).
        77  l-index pic 9(MAX-NUMBER-SIZE).
+       77  l-compare-offset pic 9(09).
+       77  l-compare-sz pic 9(09).
 
        77  d-array pic x(MAX-LINKAGE).
        77  d-swap-tmp pic x(MAX-LINKAGE).
@@ -165,11 +169,25 @@
        post-process.
            goback.
 
-       entry "array:sort" using l-array.
+       entry "array:sort" using
+           l-array
+           l-compare-offset
+           l-compare-sz
+           .
+
            $CATCHPARAMS.
            copy "catchx.pdv" replacing
                ==!W== by ==array==
                ==!N== by ==1==.
+           move 1 to w-compare-offset.
+           copy "catch9.pdv" replacing
+               ==!W== by ==compare-offset==
+               ==!N== by ==2==.
+           subtract 1 from w-compare-offset.
+           move w-array-element-sz to w-compare-sz.
+           copy "catch9.pdv" replacing
+               ==!W== by ==compare-sz==
+               ==!N== by ==3==.
 
            perform initialize-sort
               thru initialize-sort-ex.
@@ -202,26 +220,30 @@
               exit paragraph
            end-if.
            if w-partition-size = w-step
-              perform partition-only-two-elemenst
-                 thru partition-only-two-elemenst-ex
+              perform partition-only-two-elements
+                 thru partition-only-two-elements-ex
               exit paragraph
            end-if.
 
-           move d-array(w-qsort-pivot-idx:w-array-element-sz)
-              to d-pivot-value(1:w-array-element-sz).
+           move d-array(
+              w-qsort-pivot-idx +
+              w-compare-offset:w-compare-sz)
+              to d-pivot-value(1:w-compare-sz).
 
            move w-qsort-pivot-idx to w-swap-idx1.
            move w-to to w-swap-idx2.
            perform swap thru swap-ex.
 
            move w-from to w-store-idx.
-           perform varying i from w-from by w-step
-              until i >= w-to
+           add w-compare-offset to w-from giving w-from-tmp.
+           add w-compare-offset to w-to giving w-to-tmp.
+           perform varying i from w-from-tmp by w-step
+              until i >= w-to-tmp
 
-              if d-array(i:w-array-element-sz) <
-                 d-pivot-value(1:w-array-element-sz)
+              if d-array(i:w-compare-sz) <
+                 d-pivot-value(1:w-compare-sz)
 
-                 move i to w-swap-idx1
+                 subtract w-compare-offset from i giving w-swap-idx1
                  move w-store-idx to w-swap-idx2
                  perform swap thru swap-ex
                  add w-step to w-store-idx
@@ -335,7 +357,7 @@
            exit.
 
        initialize-sort.
-           call "m$alloc" using w-array-element-sz w-pivot-value-ptr.
+           call "m$alloc" using w-compare-sz w-pivot-value-ptr.
            call "m$alloc" using w-array-element-sz w-swap-tmp-ptr.
            set address of d-pivot-value to w-pivot-value-ptr.
            set address of d-swap-tmp to w-swap-tmp-ptr.
@@ -363,9 +385,9 @@
        compute-pivot-ex.
            exit.
 
-       partition-only-two-elemenst.
-           if d-array(w-from:w-array-element-sz) >
-              d-array(w-to:w-array-element-sz)
+       partition-only-two-elements.
+           if d-array(w-from + w-compare-offset:w-compare-sz) >
+              d-array(w-to + w-compare-offset:w-compare-sz)
 
               move w-from to w-swap-idx1
               move w-to to w-swap-idx2
@@ -374,7 +396,7 @@
            else
               move w-to to w-qsort-pivot-idx
            end-if.
-       partition-only-two-elemenst-ex.
+       partition-only-two-elements-ex.
            exit.
 
 
