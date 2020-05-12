@@ -325,23 +325,26 @@
        test-sortingn.
            call "array:new" using w-array length of w-num-element.
            move 1  to w-expected-array-num-arr(1).
-           move 2  to w-expected-array-num-arr(2).
-           move 3  to w-expected-array-num-arr(3).
-           move 4  to w-expected-array-num-arr(4).
-           move 5  to w-expected-array-num-arr(5).
-           move 11 to w-expected-array-num-arr(6).
+           move 1  to w-expected-array-num-arr(2).
+           move 2  to w-expected-array-num-arr(3).
+           move 3  to w-expected-array-num-arr(4).
+           move 4  to w-expected-array-num-arr(5).
+           move 5  to w-expected-array-num-arr(6).
+           move 11 to w-expected-array-num-arr(7).
 
-           move 1 to w-num-element.
+           move 3 to w-num-element.
            call "array:append" using w-array w-num-element.
            move 2 to w-num-element.
            call "array:append" using w-array w-num-element.
-           move 3 to w-num-element.
+           move 1 to w-num-element.
            call "array:append" using w-array w-num-element.
            move 4 to w-num-element.
            call "array:append" using w-array w-num-element.
-           move 5 to w-num-element.
+           move 1 to w-num-element.
            call "array:append" using w-array w-num-element.
            move 11 to w-num-element.
+           call "array:append" using w-array w-num-element.
+           move 5 to w-num-element.
            call "array:append" using w-array w-num-element.
 
            call "array:sort" using w-array.
