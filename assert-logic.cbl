@@ -76,11 +76,13 @@
            set address of d-array-data to w-array-ptr.
 
            move d-array-data(1:w-array-data-length) to w-actual
+           move low-value to w-actual(w-array-data-length + 1:1)
            copy "movex.pdv" replacing
                ==!W== by ==actual==
                ==!N== by ==3==..
 
            move w-expected(1:w-array-data-length) to w-expected
+           move low-value to w-expected(w-array-data-length + 1:1)
            copy "movex.pdv" replacing
                ==!W== by ==expected==
                ==!N== by ==2==..

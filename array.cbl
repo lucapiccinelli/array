@@ -11,7 +11,7 @@
        file section.
        working-storage section.
        copy "definitions.cpy"
-           replacing ==!MAX-PARAMS-NUM== by ==3==
+           replacing ==!MAX-PARAMS-NUM== by ==4==
            .
 
        78  INITIAL-CAPACITY value 2.
@@ -52,6 +52,9 @@
        77  w-partition-size pic 9(09) value 0.
        77  w-compare-offset pic 9(09).
        77  w-compare-sz pic 9(09).
+       77  w-comparator pic x(50) value spaces.
+
+       77  w-compare-result pic s9 value 0.
 
        linkage section.
        copy "array.cpy" replacing ==!PREFIX!== by ==l-==.
@@ -61,6 +64,7 @@
        77  l-index pic 9(MAX-NUMBER-SIZE).
        77  l-compare-offset pic 9(09).
        77  l-compare-sz pic 9(09).
+       77  l-comparator pic x(MAX-LINKAGE).
 
        77  d-array pic x(MAX-LINKAGE).
        77  d-array-compare pic x(MAX-LINKAGE).
@@ -175,6 +179,7 @@
            l-array
            l-compare-offset
            l-compare-sz
+           l-comparator
            .
 
            $CATCHPARAMS.
@@ -189,6 +194,10 @@
            copy "catch9.pdv" replacing
                ==!W== by ==compare-sz==
                ==!N== by ==3==.
+           move spaces to w-comparator.
+           copy "catchx.pdv" replacing
+               ==!W== by ==comparator==
+               ==!N== by ==4==.
 
            perform initialize-sort
               thru initialize-sort-ex.
@@ -197,7 +206,7 @@
               thru initialize-stack-ex.
 
            perform until w-qsort-stack-idx <= 0
-              perform pop-stack thru pop-stack-ex
+              perform pop-stack
 
               subtract w-from from w-to giving w-partition-size
               if w-from >= w-to or (w-partition-size < w-step)
@@ -205,10 +214,9 @@
               end-if
 
               perform compute-pivot
-                 thru compute-pivot-ex
-              perform qpartition thru qpartition-ex
-              perform push-left-partition thru push-left-partition-ex
-              perform push-right-partition thru push-right-partition-ex
+              perform qpartition
+              perform push-left-partition
+              perform push-right-partition
            end-perform.
 
            call "m$free" using w-pivot-value-ptr.
@@ -222,7 +230,6 @@
            end-if.
            if w-partition-size = w-step
               perform partition-only-two-elements
-                 thru partition-only-two-elements-ex
               exit paragraph
            end-if.
 
@@ -231,29 +238,81 @@
 
            move w-qsort-pivot-idx to w-swap-idx1.
            move w-to to w-swap-idx2.
-           perform swap thru swap-ex.
+           perform swap.
 
            move w-from to w-store-idx.
            perform varying i from w-from by w-step
               until i >= w-to
 
-              if d-array-compare(i:w-compare-sz) <
-                 d-pivot-value(1:w-compare-sz)
+              perform compare-with-pivot
 
+              if w-compare-result < 0
                  move i to w-swap-idx1
                  move w-store-idx to w-swap-idx2
-                 perform swap thru swap-ex
+                 perform swap
                  add w-step to w-store-idx
-
               end-if
 
            end-perform.
            move w-to to w-swap-idx1.
            move w-store-idx to w-swap-idx2.
-           perform swap thru swap-ex.
+           perform swap.
 
            move w-store-idx to w-qsort-pivot-idx.
        qpartition-ex.
+           exit.
+
+       compare-with-pivot.
+           if w-comparator <> spaces
+              call w-comparator
+                 using d-array-compare(i:w-compare-sz)
+                       d-pivot-value(1:w-compare-sz)
+                       w-array
+                 giving w-compare-result
+              exit paragraph
+           end-if.
+
+           if d-array-compare(i:w-compare-sz) <
+              d-pivot-value(1:w-compare-sz)
+
+              move -1 to w-compare-result
+           else
+              move 1 to w-compare-result
+           end-if.
+       compare-with-pivot-ex.
+           exit.
+
+       compare-array-elements.
+           if w-comparator <> spaces
+              call w-comparator
+                 using d-array-compare(w-from:w-compare-sz)
+                       d-array-compare(w-to:w-compare-sz)
+                       w-array
+                 giving w-compare-result
+              exit paragraph
+           end-if.
+
+           if d-array-compare(w-from:w-compare-sz) <
+              d-array-compare(w-to:w-compare-sz)
+
+              move -1 to w-compare-result
+           else
+              move 1 to w-compare-result
+           end-if.
+       compare-array-elements-ex.
+           exit.
+
+       partition-only-two-elements.
+           perform compare-array-elements.
+           if w-compare-result > 0
+              move w-from to w-swap-idx1
+              move w-to to w-swap-idx2
+              perform swap thru swap-ex
+              move w-from to w-qsort-pivot-idx
+           else
+              move w-to to w-qsort-pivot-idx
+           end-if.
+       partition-only-two-elements-ex.
            exit.
 
        swap.
@@ -385,19 +444,6 @@
        compute-pivot-ex.
            exit.
 
-       partition-only-two-elements.
-           if d-array-compare(w-from:w-compare-sz) >
-              d-array-compare(w-to:w-compare-sz)
-
-              move w-from to w-swap-idx1
-              move w-to to w-swap-idx2
-              perform swap thru swap-ex
-              move w-from to w-qsort-pivot-idx
-           else
-              move w-to to w-qsort-pivot-idx
-           end-if.
-       partition-only-two-elements-ex.
-           exit.
 
 
 

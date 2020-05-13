@@ -94,6 +94,8 @@
               thru test-sorting-ex.
            perform test-sortingn-parts-of-data-structures
               thru test-sortingn-parts-of-data-structures-ex.
+           perform test-sorting-comparators
+              thru test-sorting-comparators-ex.
 
            cancel "array".
            cancel "assert".
@@ -402,6 +404,42 @@
 
            call "array:free" using w-array.
        test-sortingn-parts-of-data-structures-ex.
+           exit.
+
+       test-sorting-comparators.
+           call "array:new" using w-array length of w-str-element.
+           move "first"  to w-expected-array-str-arr(1).
+           move "second" to w-expected-array-str-arr(2).
+           move "third"  to w-expected-array-str-arr(3).
+           move "apple"  to w-expected-array-str-arr(4).
+           move "banana" to w-expected-array-str-arr(5).
+
+           call "array:append"
+              using w-array w-expected-array-str-arr(2).
+           call "array:append"
+              using w-array w-expected-array-str-arr(5).
+           call "array:append"
+              using w-array w-expected-array-str-arr(3).
+           call "array:append"
+              using w-array w-expected-array-str-arr(1).
+           call "array:append"
+              using w-array w-expected-array-str-arr(4).
+
+           call "array:sort"
+              using w-array
+                    0
+                    length of w-str-element
+                    "testcomparator"
+                    .
+
+           call "assert"
+              using ARRAY-EQ
+                    w-expected-array-str-tbl
+                    w-array
+                    "array is sorted with test comparator".
+
+           call "array:free" using w-array.
+       test-sorting-comparators-ex.
            exit.
 
 

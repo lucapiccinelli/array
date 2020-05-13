@@ -85,7 +85,7 @@
                  w-expected
                  ". It was instead "
                  w-actual
-                 delimited by STRING-LIMIT
+                 delimited by low-value
                  into w-display-decription
                  pointer w-string-pointer
               end-string
