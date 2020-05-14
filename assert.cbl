@@ -26,6 +26,17 @@
        77  w-display-decription pic x(256) value spaces.
        77  w-string-pointer pic 9(18) value 0.
 
+       77  w-total-number-of-tests pic 9(09) value 0.
+       77  z-total-number-of-tests pic z(04)9.
+
+       77  w-success-number-of-tests pic 9(09) value 0.
+       77  z-success-number-of-tests pic z(04)9.
+
+       77  w-failed-number-of-tests pic 9(09) value 0.
+       77  z-failed-number-of-tests pic z(04)9.
+
+       77  w-verify-str pic x(256) value spaces.
+
        linkage section.
        77  l-operator pic x(MAX-LINKAGE).
        77  l-expected pic x(MAX-LINKAGE).
@@ -52,19 +63,28 @@
                ==!W== by ==description==
                ==!N== by ==4==.
 
+           if w-operator = VERIFY
+              perform run-verify thru run-verify-ex
+              goback giving 0
+           end-if.
+
            call "assert-logic"
               using w-operator w-expected w-actual
               giving w-return-value.
 
+           add 1 to w-total-number-of-tests.
+
            initialize w-display-decription
            move 1 to w-string-pointer.
            if w-return-value = OK
+              add 1 to w-success-number-of-tests
               string
                  "OK -- "
                  into w-display-decription
                  pointer w-string-pointer
               end-string
            else
+              add 1 to w-failed-number-of-tests
               string
                  "KO -- "
                  into w-display-decription
@@ -94,3 +114,29 @@
            display w-display-decription upon console.
 
            goback giving w-return-value.
+
+       run-verify.
+           move w-total-number-of-tests to z-total-number-of-tests.
+           move w-success-number-of-tests to z-success-number-of-tests.
+           move w-failed-number-of-tests to z-failed-number-of-tests.
+           initialize w-verify-str.
+           string
+              "RESULTS:"
+              z-total-number-of-tests
+              " were executed."
+              z-success-number-of-tests
+              " were OK."
+              z-failed-number-of-tests
+              " were KO."
+              into w-verify-str
+           end-string.
+
+           display w-verify-str upon console.
+           if w-failed-number-of-tests = 0
+              display "Test is OK" upon console
+           else
+              display "Test is KO" upon console
+           end-if.
+       run-verify-ex.
+           exit.
+

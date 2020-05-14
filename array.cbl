@@ -74,7 +74,8 @@
        procedure division using
            d-array
            .
-           goback giving 0.
+       post-process.
+           goback.
 
        entry "array:new" using l-array l-element-sz.
            $CATCHPARAMS.
@@ -172,9 +173,6 @@
 
            $RETURN.
 
-       post-process.
-           goback.
-
        entry "array:sort" using
            l-array
            l-compare-offset
@@ -223,6 +221,7 @@
            call "m$free" using w-swap-tmp-ptr.
 
            $RETURN.
+
 
        qpartition.
            if w-partition-size = 0

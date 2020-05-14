@@ -97,6 +97,8 @@
            perform test-sorting-comparators
               thru test-sorting-comparators-ex.
 
+           call "assert" using VERIFY.
+
            cancel "array".
            cancel "assert".
            goback.

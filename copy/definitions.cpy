@@ -6,6 +6,7 @@
        78  EQ value "eq".
        78  NUM-EQ value "numeq".
        78  ARRAY-EQ value "aeq".
+       78  VERIFY value "verify".
        78  STRING-LIMIT value "  ".
 
        copy "macros.cpy".
