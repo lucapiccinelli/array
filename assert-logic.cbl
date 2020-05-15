@@ -63,8 +63,17 @@
            if w-actual = w-expected
               goback giving OK
            else
+              inspect w-actual replacing trailing space by low-value
+              inspect w-expected replacing trailing space by low-value
+              copy "movex.pdv" replacing
+                  ==!W== by ==expected==
+                  ==!N== by ==2==.
+              copy "movex.pdv" replacing
+                  ==!W== by ==actual==
+                  ==!N== by ==3==.
               goback giving KO
            end-if.
+
        equality-ex.
            exit.
 

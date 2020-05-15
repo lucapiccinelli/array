@@ -17,6 +17,7 @@
        77  w-str-element pic x(STR-EL-SZ).
        77  w-num-element pic 9(NUM-EL-SZ) value 0.
        77  w-num-element2 pic 9(NUM-EL-SZ) value 0.
+       77  w-bigger-num-element pic 9(10) value 0.
        77  w-max-elements pic 9(NUM-EL-SZ) value 0.
        77  j pic 9(NUM-EL-SZ) value 0.
        77  i pic 9(NUM-EL-SZ) value 0.
@@ -79,6 +80,8 @@
 
            perform test-get-of-an-element
               thru test-get-of-an-element-ex.
+           perform test-get-of-an-element-numeric
+              thru test-get-of-an-element-numeric-ex.
 
            perform test-insert
               thru test-insert-ex.
@@ -86,14 +89,14 @@
            perform test-append-and-get-of-a-numeric-value
               thru test-append-and-get-of-a-numeric-value-ex.
 
-           perform test-sortingx
-              thru test-sortingx-ex.
-           perform test-sortingn
-              thru test-sortingn-ex.
+           perform test-sorting-alphanumerics
+              thru test-sorting-alphanumerics-ex.
+           perform test-sorting-numbers
+              thru test-sorting-numbers-ex.
            perform test-sorting
               thru test-sorting-ex.
-           perform test-sortingn-parts-of-data-structures
-              thru test-sortingn-parts-of-data-structures-ex.
+           perform test-sorting-parts-of-data-structures
+              thru test-sorting-parts-of-data-structures-ex.
            perform test-sorting-comparators
               thru test-sorting-comparators-ex.
 
@@ -107,6 +110,7 @@
            move STR-EL-SZ to w-expected-array-element-sz.
            move 0 to w-expected-array-length.
            move 2 to w-expected-array-capacity.
+           move "x" to w-expected-array-type.
            call "array:new" using w-array length of w-str-element.
            call "assert"
               using EQ
@@ -223,6 +227,34 @@
        test-get-of-an-element-ex.
            exit.
 
+       test-get-of-an-element-numeric.
+           call "array:new"
+              using w-array length of w-num-element TNUMERIC.
+           move 12 to w-expected-num.
+           initialize w-actual.
+           call "array:append" using w-array 12.
+           call "array:get" using w-array w-actual-num 0.
+
+           call "assert"
+              using EQ
+                    w-expected-num
+                    w-actual-num
+                    "it should be possible to read a numeric element".
+
+           move 15 to w-bigger-num-element.
+           call "array:append" using w-array w-bigger-num-element.
+           call "array:get" using w-array w-actual-num 1.
+
+           move w-bigger-num-element to w-expected-num.
+           call "assert"
+              using EQ
+                    w-expected-num
+                    w-actual-num
+                    "it should be possible to read a numeric element app
+      -             "ended from a bigger picture".
+       test-get-of-an-element-numeric-ex.
+           exit.
+
        test-insert.
            call "array:new" using w-array length of w-str-element.
            initialize w-expected-array-str-tbl.
@@ -301,7 +333,7 @@
        test-sorting-ex.
            exit.
 
-       test-sortingx.
+       test-sorting-alphanumerics.
            call "array:new" using w-array length of w-str-element.
            move "aaaaaaaaaa" to w-expected-array-str-arr(1).
            move "bbbbbbbbbb" to w-expected-array-str-arr(2).
@@ -323,11 +355,12 @@
                     "array of strings is sorted".
 
            call "array:free" using w-array.
-       test-sortingx-ex.
+       test-sorting-alphanumerics-ex.
            exit.
 
-       test-sortingn.
-           call "array:new" using w-array length of w-num-element.
+       test-sorting-numbers.
+           call "array:new"
+              using w-array length of w-num-element TNUMERIC.
            move 1  to w-expected-array-num-arr(1).
            move 1  to w-expected-array-num-arr(2).
            move 2  to w-expected-array-num-arr(3).
@@ -336,20 +369,13 @@
            move 5  to w-expected-array-num-arr(6).
            move 11 to w-expected-array-num-arr(7).
 
-           move 3 to w-num-element.
-           call "array:append" using w-array w-num-element.
-           move 2 to w-num-element.
-           call "array:append" using w-array w-num-element.
-           move 1 to w-num-element.
-           call "array:append" using w-array w-num-element.
-           move 4 to w-num-element.
-           call "array:append" using w-array w-num-element.
-           move 1 to w-num-element.
-           call "array:append" using w-array w-num-element.
-           move 11 to w-num-element.
-           call "array:append" using w-array w-num-element.
-           move 5 to w-num-element.
-           call "array:append" using w-array w-num-element.
+           call "array:append" using w-array 3.
+           call "array:append" using w-array 2.
+           call "array:append" using w-array 1.
+           call "array:append" using w-array 4.
+           call "array:append" using w-array 1.
+           call "array:append" using w-array 11.
+           call "array:append" using w-array 5.
 
            call "array:sort" using w-array.
 
@@ -360,10 +386,10 @@
                     "array of numbers is sorted".
 
            call "array:free" using w-array.
-       test-sortingn-ex.
+       test-sorting-numbers-ex.
            exit.
 
-       test-sortingn-parts-of-data-structures.
+       test-sorting-parts-of-data-structures.
            call "array:new" using w-array length of w-stt.
            move  1  to w-expected-array-stt-arr-9(1).
            move "z" to w-expected-array-stt-arr-x(1).
@@ -405,7 +431,7 @@
       -             "t of the structure".
 
            call "array:free" using w-array.
-       test-sortingn-parts-of-data-structures-ex.
+       test-sorting-parts-of-data-structures-ex.
            exit.
 
        test-sorting-comparators.

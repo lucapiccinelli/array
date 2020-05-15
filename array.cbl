@@ -55,10 +55,12 @@
        77  w-comparator pic x(50) value spaces.
 
        77  w-compare-result pic s9 value 0.
+       77  w-type pic x(32) value spaces.
 
        linkage section.
        copy "array.cpy" replacing ==!PREFIX!== by ==l-==.
        77  l-element-sz pic 9(09).
+       77  l-type pic x(MAX-LINKAGE).
        77  l-element pic x(MAX-LINKAGE).
        77  l-out-element pic x(MAX-LINKAGE).
        77  l-index pic 9(MAX-NUMBER-SIZE).
@@ -77,7 +79,7 @@
        post-process.
            goback.
 
-       entry "array:new" using l-array l-element-sz.
+       entry "array:new" using l-array l-element-sz l-type.
            $CATCHPARAMS.
            copy "catchx.pdv" replacing
                ==!W== by ==array==
@@ -85,8 +87,13 @@
            copy "catch9.pdv" replacing
                ==!W== by ==element-sz==
                ==!N== by ==2==.
+           move TALPHANUMERIC to w-type.
+           copy "catchx.pdv" replacing
+               ==!W== by ==type==
+               ==!N== by ==3==.
 
            move w-element-sz to w-array-element-sz.
+           move w-type to w-array-type.
            move INITIAL-CAPACITY to w-array-capacity.
            perform alloc thru alloc-ex.
 
@@ -373,10 +380,14 @@
 
        move-linkage-value-to-the-array.
            set address of d-array to w-offset-ptr.
-           move l-element(1:w-args-size(2))
-              to d-array(1:w-array-element-sz).
+           if w-NUMERIC-ARRAY-TYPE
+              perform move-numeric-linkage
+                 thru move-numeric-linkage-ex
+           else
+              move l-element(1:w-args-size(2))
+                 to d-array(1:w-array-element-sz)
+           end-if.
            add 1 to w-array-length.
-
        move-linkage-value-to-the-array-ex.
            exit.
 
@@ -442,6 +453,21 @@
            end-compute.
        compute-pivot-ex.
            exit.
+
+       move-numeric-linkage.
+              if w-args-size(2) <= w-array-element-sz
+                 move zeros to d-array(1:w-array-element-sz)
+                 move l-element(1:w-args-size(2))
+                    to d-array(w-array-element-sz - w-args-size(2) + 1
+                    :w-args-size(2))
+              else
+                 move l-element(w-args-size(2) - w-array-element-sz + 1:
+                    w-array-element-sz)
+                    to d-array(1:w-array-element-sz)
+              end-if.
+       move-numeric-linkage-ex.
+           exit.
+
 
 
 

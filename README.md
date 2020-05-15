@@ -120,3 +120,10 @@ Test is OK
 ```
 
 then it is working properly.
+
+## Test driven approach
+## Code conventions
+## Sorting
+## Sorting with comparators
+## Assumptions
+## Error handling

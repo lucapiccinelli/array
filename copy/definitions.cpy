@@ -2,6 +2,8 @@
        78  MAX-NUMBER-SIZE value 18.
        78  OK value 0.
        78  KO value 1.
+       78  TNUMERIC value "9".
+       78  TALPHANUMERIC value "x".
 
        78  EQ value "eq".
        78  NUM-EQ value "numeq".
