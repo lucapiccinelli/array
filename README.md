@@ -18,7 +18,37 @@ Actually, as far as i know, no COBOL implementation provide dynamic arrays out o
 
 ## Getting Started
 
-### Basic usage example
+For complete usage examples of all the functionalities of the library refer to [test-array.cbl](test-array.cbl)
+
+### Declaring and allocating
+
+You can include as many arrays as you want, copying `copy "array.cpy" replacing ==!PREFIX!== by ==w-==.` in your working storage section.
+
+Then you should allocate a new array with
+
+```cobol
+call "array:new" using w-array length of w-element.
+```
+
+There is a third optional parameter that is the type of the array. Default is **alphanumeric**, but you can specify to have a pure numeric array declaring
+
+```cobol
+call "array:new" using w-array length of w-element "9".
+```
+
+or if you `copy definitions.cpy`
+
+```cobol
+call "array:new" using w-array length of w-element NUMERIC.
+```
+
+You **MUST** free the array manually in order to prevent memory leak:
+
+```cobol
+call "array:free" using w-array.
+```
+
+### Complete basic usage example
 
 ```cobol
 identification division.
@@ -50,7 +80,8 @@ procedure division.
 ```
 
 ### Dereference and use it as a table
-In order to improve performance an enable **search** and **search all** keywords
+
+In order to improve performance and allow the use of  **search** and **search all** keywords
 
 ```cobol
 identification division.
@@ -72,6 +103,8 @@ linkage section.
 procedure division.
     |each array element is going to be 25 bytes in size
     call "array:new" using w-array length of w-element.
+
+    | add 3 elements to the array
     call "array:append" using w-array "new element".
     call "array:append" using w-array "new element 2".
     call "array:append" using w-array "banana".
@@ -87,6 +120,63 @@ procedure division.
 
 ```
 
+### Sorting
+
+Sorting is implemented with iterative quicksort.
+
+It can be as simple as
+
+```cobol
+call "array:sort" using w-array.
+```
+
+but if you need to sort with only a part of you data structure, then you can do
+
+```cobol
+call "array:sort"
+    using w-array
+        record-position of w-your-record-part | offset
+        length of w-your-record-part | length
+        .
+```
+
+### Sorting with comparators
+
+If you need more complex ordering logic you can implement your own comparator.
+
+**A complete example of a comparator** can be found here [testcomparator.cbl](testcomparator.cbl)
+
+Comparators receive two elements and return -1 if the first is smaller then the second, 0 if they are equal or 1 it the first is greater then the second.
+
+Comparators linkage is declared as follows
+
+```cobol
+identification division.
+    program-id.  mycomparator.
+
+...
+
+linkage section.
+    77  l-first pic x(MAX-LINKAGE).
+    77  l-second pic x(MAX-LINKAGE).
+    copy "array.cpy" replacing ==!PREFIX!== by ==l-==.
+
+procedure division using l-first l-second l-array.
+
+...
+```
+
+then use it in this way
+
+```cobol
+call "array:sort"
+    using w-array
+        record-position of w-your-record
+        length of w-your-record
+        "mycomparator"
+        .
+```
+
 ## How to Compile
 
 A **compile.bat** script is provided for convenience. On Windows open a command prompt and run
@@ -95,7 +185,7 @@ A **compile.bat** script is provided for convenience. On Windows open a command 
 compile.bat
 ```
 
-In order to run it succesfully, it is supposed that you have set the ccbl32 compiler in your Windows **PATH** environment variable.
+In order to run it succesfully, it is supposed that you have set the **ccbl32** compiler in your Windows **PATH** environment variable.
 
 This is going to compile in a directory named **bin**, in same path of the repo.
 
@@ -121,9 +211,35 @@ Test is OK
 
 then it is working properly.
 
-## Test driven approach
 ## Code conventions
-## Sorting
-## Sorting with comparators
+
+Following conventions are applied in the code:
+
+* working storage variables start with **w-**
+* linkage variables start with **l-**
+* linkage variables used to dereference pointers start with **d-** (dynamic)
+
+Called programs that receives a linkage (like array itself) handles the linkage and move it in a safe corresponding working storage section.
+
+This is done using:
+
+* **$CATCHPARAMS** macro declared in [macros.cpy](copy/macros.cpy) and copied in [definition.cpy](copy/definitions.cpy)
+* copy [catchx.cpy](copy/catchx.cpy)/[catch9.cpy](copy/catch9.cpy) safely that moves linkage in working
+* **linkage variables are declared as the maximum size** allowed for the corresponding picture type.
+
+Following this approach simplifies the use of libraries, so that it doesn't requires that variables used to call a program match the format declared in the linkage section of the called program/library.
+
+## Test driven approach
+
+This library is developed following the test driven development approach (TDD).
+Tests are in [test-array.cbl](test-array.cbl).
+
+By the way this file represents also a complete specification of what this can/can't do, as well as an extensive usage examples documentation. If you are interested in this library I would suggest to have a look at it.
+
+I implemented the minimum assertion logic needed in this development
+
+* [assert.cbl](assert.cbl)
+* [assert-logic.cbl](assert-logic.cbl)
+
 ## Assumptions
 ## Error handling
