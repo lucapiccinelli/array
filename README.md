@@ -96,7 +96,7 @@ linkage section.
 01 d-array-tbl.
     03 d-array-element pic x(25)
     occurs 20000000 | use a number big enough but the total must be less then 2GB
-    depending on w-array-lenth
+    depending on w-array-length
     ascending key is d-array-element | this enables the usage of search all keyword
     .
 
