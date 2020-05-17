@@ -241,5 +241,12 @@ I implemented the minimum assertion logic needed in this development
 * [assert.cbl](assert.cbl)
 * [assert-logic.cbl](assert-logic.cbl)
 
-## Assumptions
 ## Error handling
+
+There is no error handling :fearful:. Yes this is quite an extreme choice, then I will try to argument.
+
+This is the second version of this library that I wrote. I wrote the first one exacly 9 years ago. There was error handling in that case, but what happened in reality is that no one (me or my colleagues) never actually used it. In 9 years of a really intensive usage of this library (in our code base the word "array:" has **23954 hits in 1918 files**)... it has never been a problem.
+
+I think that there is on main reasons for this: the cost/benefits ratio: doing a proper error handling in a procedural programming language comes at the cost of explicitly check some kind of error code. The code that you are going to write for this error checking is going to be some boilerplate that, **given the relative low level of this library**, has the only effect to negatively affect the readability of your code.
+
+However if you are concerned about the fact that a `m$alloc` could go out of memory, you can always check that the value of the pointer of the array returned different than zero, after an allocation or an element insertion.
