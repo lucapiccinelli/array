@@ -213,28 +213,28 @@ then it is working properly.
 
 ## Code conventions
 
-Following conventions are applied in the code:
+The following conventions are applied in the code:
 
 * working storage variables start with **w-**
 * linkage variables start with **l-**
 * linkage variables used to dereference pointers start with **d-** (dynamic)
 
-Called programs that receives a linkage (like array itself) handles the linkage and move it in a safe corresponding working storage section.
+Called programs that receives a linkage (like array itself) handles the linkage and move it in a safe corresponding working storage variable.
 
 This is done using:
 
-* **$CATCHPARAMS** macro declared in [macros.cpy](copy/macros.cpy) and copied in [definition.cpy](copy/definitions.cpy)
-* copy [catchx.cpy](copy/catchx.cpy)/[catch9.cpy](copy/catch9.cpy) safely that moves linkage in working
+* **$CATCHPARAMS** macro declared in [macros.cpy](copy/macros.cpy) and copied in [definitions.cpy](copy/definitions.cpy)
+* copy [catchx.cpy](copy/catchx.cpy)/[catch9.cpy](copy/catch9.cpy) safely moves linkage in working
 * **linkage variables are declared as the maximum size** allowed for the corresponding picture type.
 
-Following this approach simplifies the use of libraries, so that it doesn't requires that variables used to call a program match the format declared in the linkage section of the called program/library.
+This approach simplifies the use of libraries, so that it is not required that variables used to call a program, match the format declared in the corresponding linkage section.
 
 ## Test driven approach
 
 This library is developed following the test driven development approach (TDD).
 Tests are in [test-array.cbl](test-array.cbl).
 
-By the way this file represents also a complete specification of what this can/can't do, as well as an extensive usage examples documentation. If you are interested in this library I would suggest to have a look at it.
+By the way this file represents also a complete specification of the library, as well as an extensive usage examples documentation. **If you are interested in this library I would suggest to have a look at it**.
 
 I implemented the minimum assertion logic needed in this development
 
