@@ -247,6 +247,6 @@ There is no error handling :fearful:. Yes this is quite an extreme choice, then 
 
 This is the second version of this library. I wrote the first one exacly 9 years ago. There was an error handling system in that case, but no one never actually used it. In 9 years of a really intensive usage of this library... it has never been a problem. (In our code base the word "array:" has **23954 hits in 1918 files**)
 
-I think that there is one main reasons for this: the cost/benefits ratio: doing a proper error handling in a procedural programming language comes at the cost of explicitly check some kind of error code. You are going to write a lot of boilerplate code that, **given the relative low level of this library**, has the only effect to negatively affect the readability of your code.
+I think that there is one main reasons for this: the cost/benefits ratio: doing a proper error handling in a procedural programming language, comes at the cost of explicitly check some kind of error code. You are going to write a lot of boilerplate code that, **given the relative low level of this library**, has the only effect to negatively affect the readability of your code.
 
 However if you are concerned about the fact that a `m$alloc` could eventually go out of memory, you can always check that the value of the pointer of the array returned different than zero, after an allocation or an element insertion.
