@@ -18,7 +18,7 @@ Actually, as far as i know, no COBOL implementation provide dynamic arrays out o
 
 ## Getting Started
 
-For complete usage examples of all the functionalities of the library refer to [test-array.cbl](test-array.cbl)
+For a complete usage examples of all the functionalities of the library, refer to [test-array.cbl](test-array.cbl)
 
 ### Declaring and allocating
 
