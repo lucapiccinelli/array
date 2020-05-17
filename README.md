@@ -62,6 +62,7 @@ copy "array.cpy" replacing ==!PREFIX!== by ==w-==. | array data structure
 linkage section.
 
 procedure division.
+    call "array".
     | each array element is going to be 25 bytes in size
     call "array:new" using w-array length of w-element.
 
@@ -75,6 +76,7 @@ procedure division.
 
     | free dynamic memory
     call "array:free" using w-array.
+    cancel "array".
 
     goback.
 ```
@@ -101,6 +103,7 @@ linkage section.
     .
 
 procedure division.
+    call "array".
     |each array element is going to be 25 bytes in size
     call "array:new" using w-array length of w-element.
 
@@ -115,6 +118,7 @@ procedure division.
     move d-array-element(1) to w-element. | use it... this is 1 based index, as a usual table
 
     call "array:free" using w-array.
+    cancel "array".
 
     goback.
 
