@@ -3,6 +3,8 @@
        environment division.
        working-storage section.
 
+       copy "definitions.cpy".
+
        copy "array.cpy" replacing ==!PREFIX!== by ==w-==.
        77  w-element pic x(25) value spaces.
 
@@ -15,6 +17,7 @@
            .
 
        procedure division.
+           call "array".
            |each array element is going to be 25 bytes in size
            call "array:new" using w-array length of w-element.
            call "array:append" using w-array "new element".
