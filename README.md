@@ -254,3 +254,8 @@ This is the second version of this library. I wrote the first one exacly 9 years
 I think that there is one main reasons for this: the cost/benefits ratio: doing a proper error handling in a procedural programming language, comes at the cost of explicitly check some kind of error code. You are going to write a lot of boilerplate code that, **given the relative low level of this library**, has the only effect to negatively affect the readability of your code.
 
 However if you are concerned about the fact that a `m$alloc` could eventually go out of memory, you can always check that the value of the pointer of the array returned different than zero, after an allocation or an element insertion.
+
+## More about this library.
+
+I spoke about this library together Michele Riva in his podcast. Check it out if you like it.
+[![Making COBOL modern: dynamic arrays, recursion](https://www.youtube.com/watch?v=uQP89kG6K4k/0.jpg)](https://www.youtube.com/watch?v=uQP89kG6K4k)
