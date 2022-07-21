@@ -258,4 +258,4 @@ However if you are concerned about the fact that a `m$alloc` could eventually go
 ## More about this library.
 
 I spoke about this library together Michele Riva in his podcast. Check it out if you like it.
-[![Making COBOL modern: dynamic arrays, recursion](https://www.youtube.com/watch?v=uQP89kG6K4k/0.jpg)](https://www.youtube.com/watch?v=uQP89kG6K4k)
+[![Making COBOL modern: dynamic arrays, recursion](https://img.youtube.com/vi/uQP89kG6K4k/0.jpg)](https://www.youtube.com/watch?v=uQP89kG6K4k)
